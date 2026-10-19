@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home screen voice widget. -->
+    <string name="widget_voice_label">Ask Emberwit</string>
+    <string name="widget_voice_description">Tap to speak to Emberwit: questions, alarms, timers, the flashlight or opening an app. Works offline.</string>
+</resources>

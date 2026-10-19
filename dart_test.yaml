@@ -1,0 +1,7 @@
+tags:
+  golden:
+    description: Pixel comparison tests. Goldens are generated on Linux; run
+      with --exclude-tags golden on other hosts.
+  native:
+    description: Needs the llama_ffi host build (LLAMA_FFI_LIB_DIR) and the
+      test model (packages/llama_ffi/tool/fetch_test_model.sh).

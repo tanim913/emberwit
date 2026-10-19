@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+# Pinned; update deliberately (bundle update fastlane) and review the diff.
+gem "fastlane", "2.228.0"

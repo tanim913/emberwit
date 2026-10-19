@@ -1,0 +1,15 @@
+{
+  "added": {
+    "flutter_math_fork": "0.7.4",
+    "flutter_svg": "2.3.0",
+    "nested": "1.0.0",
+    "path_parsing": "1.1.0",
+    "provider": "6.1.5+1",
+    "tuple": "2.0.2",
+    "vector_graphics": "1.2.3",
+    "vector_graphics_codec": "1.1.13",
+    "vector_graphics_compiler": "1.3.0"
+  },
+  "changed_existing": {},
+  "removed": []
+}

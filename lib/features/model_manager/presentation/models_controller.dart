@@ -1,0 +1,227 @@
+import 'dart:async';
+
+import 'package:emberwit/core/catalog/catalog_repository.dart';
+import 'package:emberwit/core/catalog/model_catalog.dart';
+import 'package:emberwit/core/device/device_profile.dart';
+import 'package:emberwit/core/device/device_profile_repository.dart';
+import 'package:emberwit/core/errors/app_failure.dart';
+import 'package:emberwit/core/models/model_library.dart';
+import 'package:emberwit/core/recommendation/recommendation_engine.dart';
+import 'package:emberwit/core/result/result.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'models_controller.freezed.dart';
+part 'models_controller.g.dart';
+
+/// A catalog model with its recommendation for this device.
+@immutable
+final class AvailableModel {
+  /// Creates the pairing.
+  const new(this.entry, this.recommendation);
+
+  /// Catalog entry.
+  final CatalogEntry entry;
+
+  /// Recommendation for this device, `null` before the device is profiled.
+  final ModelRecommendation? recommendation;
+}
+
+/// State of the models screen.
+@freezed
+abstract class ModelsState with _$ModelsState {
+  /// Creates the state.
+  const factory({
+    /// Catalog in use.
+    CatalogSnapshot? catalog,
+
+    /// Installed models and downloads.
+    @Default(LibraryState()) LibraryState library,
+
+    /// Device profile used for recommendations.
+    DeviceProfile? profile,
+
+    /// Checking the server for a newer catalog.
+    @Default(false) bool refreshingCatalog,
+
+    /// Why the last catalog refresh failed.
+    AppFailure? catalogFailure,
+
+    /// Failure of the last user action (download, import, delete).
+    AppFailure? actionFailure,
+  }) = _ModelsState;
+
+  const new _();
+
+  /// Catalog models that are not installed, best recommendation first.
+  List<AvailableModel> get available {
+    final catalog = this.catalog?.catalog;
+    if (catalog == null) return const [];
+    final notInstalled = [
+      for (final entry in catalog.models)
+        if (library.installedModel(entry.id) == null &&
+            !library.downloads.containsKey(entry.id))
+          entry,
+    ];
+    final device = profile;
+    if (device == null) {
+      return [for (final e in notInstalled) AvailableModel(e, null)];
+    }
+    final byId = {for (final e in notInstalled) e.id: e};
+    return [
+      for (final r in const RecommendationEngine().recommendAll(
+        notInstalled.map((e) => e.toSpec()),
+        device,
+      ))
+        AvailableModel(byId[r.modelId]!, r),
+    ];
+  }
+
+  /// Catalog entry for a model being downloaded.
+  CatalogEntry? entryFor(String modelId) => catalog?.catalog.entry(modelId);
+
+  /// Installed models with what is known about them, newest first.
+  List<InstalledDetails> get installedDetails => [
+    for (final model in library.installed) _details(model),
+  ];
+
+  InstalledDetails _details(InstalledModel model) {
+    final entry = catalogEntryFor(model, catalog?.catalog);
+    final device = profile;
+    return InstalledDetails(
+      model,
+      entry,
+      entry == null || device == null
+          ? null
+          : const RecommendationEngine().recommend(
+              // Already on the phone: the free space rule does not apply.
+              entry.toSpec(isInstalled: true),
+              device,
+            ),
+    );
+  }
+}
+
+/// The catalog entry describing [model]: the one saved when it was
+/// downloaded (so details survive offline use and catalog changes),
+/// otherwise the current catalog's entry with the same id and SHA-256.
+/// Imported files have none: nothing is guessed from a file name.
+CatalogEntry? catalogEntryFor(InstalledModel model, ModelCatalog? catalog) {
+  final saved = model.catalogEntry;
+  if (saved != null) return saved;
+  if (model.verification != ModelVerification.verified) return null;
+  final current = catalog?.entry(model.id);
+  return current != null && current.sha256 == model.sha256 ? current : null;
+}
+
+/// An installed model with its catalog entry and how it runs here.
+@immutable
+final class InstalledDetails {
+  /// Creates the pairing.
+  const new(this.model, this.entry, this.recommendation);
+
+  /// The file on the phone.
+  final InstalledModel model;
+
+  /// Catalog facts, `null` for imported files.
+  final CatalogEntry? entry;
+
+  /// How well it runs on this phone, `null` without entry or profile.
+  final ModelRecommendation? recommendation;
+}
+
+/// Drives the models screen: catalog, recommendations, downloads, imports.
+@riverpod
+class ModelsController extends _$ModelsController {
+  StreamSubscription<LibraryState>? _library;
+
+  ModelLibrary get _models => ref.read(modelLibraryProvider);
+
+  @override
+  ModelsState build() {
+    final library = ref.watch(modelLibraryProvider);
+    _library = library.changes.listen(
+      (s) => state = state.copyWith(library: s),
+    );
+    ref.onDispose(() => unawaited(_library?.cancel()));
+    unawaited(_load());
+    return ModelsState(library: library.state);
+  }
+
+  Future<void> _load() async {
+    final catalogs = ref.read(catalogRepositoryProvider);
+    final profiles = ref.read(deviceProfileRepositoryProvider);
+    await _models.initialize();
+    final snapshot = await catalogs.current();
+    final profile =
+        await profiles.cachedProfile() ??
+        (await profiles.refreshProfile()).valueOrNull;
+    if (!ref.mounted) return;
+    state = state.copyWith(
+      catalog: snapshot,
+      profile: profile,
+      library: _models.state,
+    );
+    await refreshCatalog();
+  }
+
+  /// Asks the server for a newer signed catalog.
+  Future<void> refreshCatalog() async {
+    state = state.copyWith(refreshingCatalog: true, catalogFailure: null);
+    final result = await ref.read(catalogRepositoryProvider).refresh();
+    if (!ref.mounted) return;
+    state = switch (result) {
+      Ok(:final value) => state.copyWith(
+        catalog: value,
+        refreshingCatalog: false,
+      ),
+      Err(:final failure) => state.copyWith(
+        refreshingCatalog: false,
+        catalogFailure: failure,
+      ),
+    };
+  }
+
+  /// Starts downloading [entry].
+  Future<void> download(CatalogEntry entry) async {
+    state = state.copyWith(actionFailure: null);
+    final result = await _models.download(entry);
+    if (ref.mounted) {
+      state = state.copyWith(actionFailure: result.failureOrNull);
+    }
+  }
+
+  /// Pauses a download.
+  Future<void> pause(String modelId) => _models.pause(modelId);
+
+  /// Resumes a download.
+  Future<void> resume(String modelId) => _models.resume(modelId);
+
+  /// Cancels a download, or dismisses a failed one.
+  Future<void> cancel(String modelId) => _models.cancel(modelId);
+
+  /// Retries a failed download.
+  Future<void> retry(String modelId) async {
+    final entry = state.entryFor(modelId);
+    await _models.cancel(modelId);
+    if (entry != null) await download(entry);
+  }
+
+  /// Imports a GGUF file chosen by the user.
+  Future<void> importFromDevice() async {
+    state = state.copyWith(actionFailure: null);
+    final result = await _models.importFromDevice();
+    if (ref.mounted) {
+      state = state.copyWith(actionFailure: result.failureOrNull);
+    }
+  }
+
+  /// Deletes an installed model.
+  Future<void> delete(String modelId) async {
+    state = state.copyWith(actionFailure: null);
+    final result = await _models.delete(modelId);
+    if (ref.mounted) {
+      state = state.copyWith(actionFailure: result.failureOrNull);
+    }
+  }
+}

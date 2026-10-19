@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Unknown JSON fields are ignored so older app versions keep working
+          # when the remote catalog schema gains fields.
+          disallow_unrecognized_keys: false
+          explicit_to_json: true
+          include_if_null: false
+      drift_dev:
+        options:
+          store_date_time_values_as_text: true
+          named_parameters: true

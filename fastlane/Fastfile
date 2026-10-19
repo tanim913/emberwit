@@ -1,0 +1,79 @@
+# Release lanes for Emberwit. See docs/RELEASING.md.
+#
+# Android: fastlane android internal   (AAB to the Play internal track)
+#          fastlane android metadata   (store listing only, en-US and bn-BD)
+# iOS:     fastlane ios beta           (IPA to TestFlight, macOS only)
+#
+# Secrets (all from the environment, never committed):
+#   PLAY_JSON_KEY_PATH         Google Play service account JSON
+#   EMBERWIT_SIGNING           Android key.properties path (default
+#                              ~/.emberwit-release/key.properties)
+#   APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_ISSUER_ID,
+#   APP_STORE_CONNECT_API_KEY_CONTENT   App Store Connect API key (.p8 text)
+#   MATCH_GIT_URL, MATCH_PASSWORD       iOS signing certificates (match)
+
+default_platform(:android)
+
+ROOT = File.expand_path("..", __dir__)
+
+def sh_root(command)
+  Dir.chdir(ROOT) { sh(command) }
+end
+
+platform :android do
+  desc "Build the signed release bundle and run the security audit"
+  lane :build do
+    UI.user_error!("Release signing key missing") unless File.exist?(
+      ENV.fetch("EMBERWIT_SIGNING", File.expand_path("~/.emberwit-release/key.properties"))
+    )
+    sh_root("tool/build_android.sh prod appbundle")
+    sh_root("tool/build_android.sh prod apk")
+    sh_root("STRICT=1 tool/security_audit.sh build/app/outputs/flutter-apk/app-prod-release.apk")
+  end
+
+  desc "Upload the release bundle to the internal testing track"
+  lane :internal do
+    build
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      aab: File.join(ROOT, "build/app/outputs/bundle/prodRelease/app-prod-release.aab"),
+      mapping: File.join(ROOT, "build/app/outputs/mapping/prodRelease/mapping.txt"),
+      metadata_path: File.join(ROOT, "fastlane/metadata/android"),
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Upload the store listing (titles, descriptions, graphics) only"
+  lane :metadata do
+    upload_to_play_store(
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: true,
+      metadata_path: File.join(ROOT, "fastlane/metadata/android")
+    )
+  end
+end
+
+platform :ios do
+  desc "Build a signed IPA and upload it to TestFlight"
+  lane :beta do
+    setup_ci if ENV["CI"]
+    asc_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
+      key_content: ENV.fetch("APP_STORE_CONNECT_API_KEY_CONTENT")
+    )
+    match(type: "appstore", readonly: true, api_key: asc_key)
+    sh_root("tool/codegen.sh && tool/fetch_benchmark_model.sh")
+    sh_root(
+      "flutter build ipa --release --flavor prod " \
+      "--obfuscate --split-debug-info=build/symbols/prod-ios " \
+      "--export-options-plist=ios/ExportOptions.plist"
+    )
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true, api_key: asc_key,
+      ipa: Dir[File.join(ROOT, "build/ios/ipa/*.ipa")].first
+    )
+  end
+end

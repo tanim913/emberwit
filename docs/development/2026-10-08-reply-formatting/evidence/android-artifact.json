@@ -1,0 +1,15 @@
+{
+  "path": "build/app/outputs/flutter-apk/app-dev-debug.apk",
+  "flavor": "dev",
+  "mode": "debug",
+  "size_bytes": 221833122,
+  "sha256": "b93555098768f042319cc960fedfc3ac2c00efe4f1e559d2a4bfee4da12b96af",
+  "architectures": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "bundled_math_font_files": 20,
+  "katex_font_notice_bundled": true,
+  "command": "flutter build apk --no-pub --debug --flavor dev --target-platform android-arm64,android-x64",
+  "note": "Built locally; not installed on a phone or published."
+}

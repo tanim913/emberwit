@@ -1,0 +1,25 @@
+Emberwit is an AI assistant that runs entirely on your phone. Download a language model once, and every conversation after that happens on your device, even in airplane mode.
+
+PRIVATE BY DESIGN
+• Your chats never leave your phone. They are stored encrypted (AES-256).
+• No account, no ads, no analytics, no tracking.
+• The internet is used only to download the model list and the models you choose.
+• Optional app lock with your fingerprint, face or screen lock.
+
+MADE FOR YOUR PHONE
+• A quick speed test checks what your phone can run, then recommends models that fit its memory and speed.
+• Downloads are checked against a signed catalog, so you always get the exact model file.
+• The app slows down when your phone is hot or the battery is low, and frees memory when other apps need it.
+
+ENGLISH AND BENGALI
+• The whole app is available in English and Bengali.
+• Ask questions in either language.
+
+FEATURES
+• Streaming replies you can stop at any time
+• Several conversations, search, pin and rename
+• Choose a model per chat, adjust creativity and reply length
+• Encrypted export and import of your chats with a passphrase
+• Import your own GGUF model files
+
+Models come from their creators (Qwen, Gemma, Llama, Phi and others), each under its own license, listed in the app. Answers from small on-device models can be wrong: check important information.

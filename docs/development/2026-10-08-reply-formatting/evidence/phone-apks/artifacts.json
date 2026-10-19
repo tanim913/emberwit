@@ -1,0 +1,53 @@
+{
+  "built_date": "2026-10-08",
+  "artifacts": [
+    {
+      "kind": "lite",
+      "path": "build/emberwit-0.1.0-arm64-lite-20261008.apk",
+      "bytes": 22278978,
+      "size_MB": 22.28,
+      "size_MiB": 21.25,
+      "sha256": "2fc876a466d5c83c78b2b687f04bbb587b674629e512fbef8cb5f64b9a49fd76",
+      "flutter_app_abis": [
+        "arm64-v8a"
+      ],
+      "all_packaged_native_abis": [
+        "arm64-v8a",
+        "x86_64"
+      ],
+      "benchmark_assets": [],
+      "math_font_count": 20,
+      "math_license_in_notices": true,
+      "certificate_sha256": "200d39d03077ec8d385ba917b5b86ac023a7ab4003551518db488c38a653c314",
+      "same_certificate_as_previous_lite": true,
+      "package": "package: name='app.emberwit' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "same_package_and_version_as_previous_lite": true,
+      "release_audit_passed": true
+    },
+    {
+      "kind": "full",
+      "path": "build/emberwit-0.1.0-arm64-20261008.apk",
+      "bytes": 114172258,
+      "size_MB": 114.17,
+      "size_MiB": 108.88,
+      "sha256": "4e559aa4270c3f3a1ddb0990be47f6ed41373bff0c91ad7ffcf40c54b0aca930",
+      "flutter_app_abis": [
+        "arm64-v8a"
+      ],
+      "all_packaged_native_abis": [
+        "arm64-v8a",
+        "x86_64"
+      ],
+      "benchmark_assets": [
+        "assets/flutter_assets/assets/models/benchmark.gguf"
+      ],
+      "math_font_count": 20,
+      "math_license_in_notices": true,
+      "certificate_sha256": "200d39d03077ec8d385ba917b5b86ac023a7ab4003551518db488c38a653c314",
+      "same_certificate_as_previous_lite": true,
+      "package": "package: name='app.emberwit' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "same_package_and_version_as_previous_lite": true,
+      "release_audit_passed": true
+    }
+  ]
+}

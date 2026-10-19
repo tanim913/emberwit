@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emberwit | Offline AI for your phone</title>
+  <meta name="description" content="Emberwit is a free, open-source AI assistant for Android that runs fully on your phone. Download a model once, then chat in English or Bengali with no internet, no account and no tracking.">
+  <link rel="canonical" href="https://tanim913.github.io/emberwit/">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1020'/%3E%3Cpath d='M16 5c3 5 7 8 7 13a7 7 0 0 1-14 0c0-3 2-5 3-7 1 3 2 4 4 4-1-4 0-7 0-10z' fill='%23ffb04a'/%3E%3C/svg%3E">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Emberwit">
+  <meta property="og:title" content="Emberwit: AI that works when the internet doesn't">
+  <meta property="og:description" content="Free and open source. A private AI assistant that runs on your Android phone, in English and Bengali, fully offline.">
+  <meta property="og:url" content="https://tanim913.github.io/emberwit/">
+  <meta property="og:image" content="https://tanim913.github.io/emberwit/social-preview.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Emberwit","operatingSystem":"Android 8.0+","applicationCategory":"UtilitiesApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://tanim913.github.io/emberwit/","downloadUrl":"https://github.com/tanim913/emberwit/releases/latest","license":"https://opensource.org/licenses/MIT"}
+  </script>
+  <link rel="preload" href="site/fonts/anek-bangla.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="site/vendor/three.module.min.js">
+  <style>
+    @font-face {
+      font-family: "Anek Bangla";
+      src: url("site/fonts/anek-bangla.woff2") format("woff2");
+      font-weight: 350 800;
+      font-stretch: 75% 100%;
+      font-display: swap;
+    }
+
+    :root {
+      /* Two inks: monsoon-night indigo and kerosene flame. */
+      --soot: #060912;
+      --night: #0b1020;
+      --night-2: #111a30;
+      --night-3: #1a2542;
+      --line: rgba(160, 182, 222, 0.14);
+      --cold: #93a6c9;          /* text out of the lamp's reach */
+      --cold-dim: #7083a8;
+      --text: #e3e8f2;
+      --lit: #fbe9cc;           /* text inside the lamp's light */
+      --flame: #ffb04a;
+      --flame-hot: #ffd89a;
+      --ember: #e86a2a;
+      --ink-on-flame: #1b1206;
+      --lx: 80vw;               /* lantern on screen, set by the scene */
+      --ly: 55vh;
+      --glow: 1;                /* flame brightness, flickers */
+      --radius: 18px;
+      --wrap: 1180px;
+      --gutter: clamp(16px, 4vw, 40px);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--night); scrollbar-color: var(--night-3) var(--night); scrollbar-width: thin; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--night);
+      font-family: "Anek Bangla", "Noto Sans Bengali", system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
+      font-stretch: 100%;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--flame); color: var(--ink-on-flame); }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--soot); }
+    ::-webkit-scrollbar-thumb { background: var(--night-3); border-radius: 10px; border: 2px solid var(--soot); }
+    a { color: var(--flame-hot); text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
+    a:hover { color: var(--flame); }
+    :focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; border-radius: 6px; }
+    img, svg { display: block; }
+    button { font: inherit; color: inherit; }
+    [lang="bn"], .bn { font-feature-settings: normal; }
+
+    .skip { position: absolute; left: 12px; top: -60px; z-index: 50; background: var(--flame); color: var(--ink-on-flame); padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: 650; }
+    .skip:focus { top: 12px; }
+
+    /* ---------- The night scene behind everything ---------- */
+    #scene {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 0; display: block;
+      background:
+        radial-gradient(60vmax 60vmax at var(--lx) var(--ly), rgba(255, 150, 60, calc(0.22 * var(--glow))), transparent 60%),
+        var(--night);
+    }
+    /* The lamp's light over the page itself: warm near the flame, cold far away. */
+    .lamplight {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(48vmax 48vmax at var(--lx) var(--ly), rgba(255, 166, 74, calc(0.10 * var(--glow))), transparent 70%);
+      mix-blend-mode: screen;
+    }
+    .torch {
+      position: fixed; inset: 0; z-index: 30; pointer-events: none; opacity: 0;
+      background: radial-gradient(22vmax 22vmax at var(--tx, 50vw) var(--ty, 50vh), rgba(235, 242, 255, 0.28), rgba(235, 242, 255, 0.08) 45%, transparent 70%);
+      mix-blend-mode: screen;
+      transition: opacity 0.5s var(--ease-out);
+    }
+    body.torch-on .torch { opacity: 1; }
+
+    main, header, footer { position: relative; z-index: 2; }
+    .wrap { width: min(100% - 2 * var(--gutter), var(--wrap)); margin-inline: auto; }
+
+    /* ---------- Top bar ---------- */
+    .bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+    .bar.solid { background: rgba(6, 9, 18, 0.72); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border-color: var(--line); }
+    .bar .wrap { display: flex; align-items: center; gap: 18px; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--lit); text-decoration: none; font-weight: 700; font-size: 21px; letter-spacing: -0.01em; font-stretch: 88%; }
+    .brand svg { width: 26px; height: 26px; }
+    .bar nav { display: flex; gap: 4px; margin-left: auto; align-items: center; }
+    .bar nav a.navlink { color: var(--cold); text-decoration: none; font-size: 16px; padding: 8px 12px; border-radius: 10px; transition: color 0.2s, background 0.2s; }
+    .bar nav a.navlink:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
+    .langswitch {
+      display: inline-flex; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); margin-left: 6px;
+    }
+    .langswitch button { border: 0; background: none; padding: 4px 12px; border-radius: 999px; cursor: pointer; color: var(--cold); font-size: 15px; line-height: 1.4; }
+    .langswitch button[aria-pressed="true"] { background: var(--flame); color: var(--ink-on-flame); font-weight: 650; }
+
+    .btn {
+      --b: var(--flame);
+      display: inline-flex; align-items: center; gap: 10px; justify-content: center;
+      min-height: 52px; padding: 0 24px; border-radius: 14px;
+      background: var(--b); color: var(--ink-on-flame);
+      font-weight: 700; font-size: 18px; text-decoration: none; border: 0; cursor: pointer;
+      box-shadow: var(--sx, 0px) var(--sy, 14px) 30px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      transition: transform 0.35s var(--ease-out), background 0.2s;
+    }
+    .btn:hover { color: var(--ink-on-flame); background: var(--flame-hot); transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .btn svg { width: 20px; height: 20px; }
+    .btn.small { min-height: 40px; padding: 0 16px; font-size: 16px; border-radius: 11px; }
+    .btn.ghost { background: rgba(255, 255, 255, 0.06); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+    .btn.ghost:hover { background: rgba(255, 255, 255, 0.1); color: var(--lit); }
+
+    /* ---------- Hero ---------- */
+    .hero { min-height: 100svh; display: grid; align-items: center; padding: 96px 0 56px; }
+    .hero .wrap { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 3vw, 48px); align-items: center; }
+    .hero h1 {
+      margin: 0; color: var(--lit);
+      font-size: clamp(44px, 6.4vw, 92px); line-height: 0.95; font-weight: 780; font-stretch: 78%;
+      letter-spacing: -0.025em; text-wrap: balance;
+      text-shadow: calc(var(--tsx, -6px)) calc(var(--tsy, 8px)) 28px rgba(0, 0, 0, 0.55);
+    }
+    html[data-lang="bn"] .hero h1 { font-size: clamp(40px, 5.6vw, 80px); line-height: 1.12; letter-spacing: 0; }
+    .altline { margin: 18px 0 0; color: var(--flame-hot); font-size: clamp(20px, 1.9vw, 26px); font-weight: 560; line-height: 1.35; }
+    html[data-lang="bn"] .altline.en, html[data-lang="en"] .altline.bn { display: none; }
+    .hero .sub { margin: 20px 0 0; max-width: 34ch; font-size: clamp(19px, 1.6vw, 22px); color: var(--text); line-height: 1.55; }
+    .hero .sub b { color: var(--flame-hot); font-weight: 600; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; align-items: center; }
+    .fine { color: var(--cold); font-size: 15px; margin: 16px 0 0; }
+    .fine span + span::before { content: "·"; margin: 0 8px; color: var(--cold-dim); }
+
+    /* Demo phone */
+    .stage { position: relative; display: grid; grid-template-columns: minmax(140px, 1fr) auto; column-gap: 8px; row-gap: 18px; align-items: end; justify-items: center; perspective: 1400px; }
+    .stage > .switch, .stage > .tries, .stage > .demo-note { grid-column: 1 / -1; }
+    .lampspot { pointer-events: none; }
+    .lampspot-d { grid-column: 1; grid-row: 1; width: 100%; height: 400px; }
+    .lampspot-m { display: none; }
+    .phone {
+      --rx: 3deg; --ry: 9deg; --la: 270deg;
+      grid-column: 2; grid-row: 1;
+      position: relative; width: min(300px, 80vw); aspect-ratio: 9 / 18.6;
+      border-radius: 42px; padding: 10px;
+      /* lit only by the lantern: warm on the flame side, falling off across the body */
+      background: linear-gradient(var(--la), rgba(255, 168, 86, calc(0.34 * var(--glow))) 0%, rgba(255, 168, 86, 0) 38%), #111318;
+      transform: rotateX(var(--rx)) rotateY(var(--ry));
+      transform-style: preserve-3d;
+      transition: transform 0.9s var(--ease-out);
+      box-shadow:
+        var(--psx, -30px) var(--psy, 40px) 70px -20px rgba(0, 0, 0, 0.75),
+        var(--psx2, -10px) var(--psy2, 14px) 24px -8px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.08),
+        inset var(--rimx, 2px) 0 0 rgba(255, 190, 110, calc(0.35 * var(--glow)));
+    }
+    .screen {
+      position: relative; height: 100%; border-radius: 34px; overflow: hidden;
+      background: #16191d; color: #e9ecef; display: flex; flex-direction: column;
+      font-size: 14.5px; line-height: 1.45;
+    }
+    .screen::after { /* lamp light falling across the glass from the flame side */
+      content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+      background: linear-gradient(var(--la), rgba(255, 180, 110, calc(0.08 * var(--glow))), transparent 32%);
+    }
+    /* the phone stands on the table: its shadow falls away from the flame, its screen throws cold light down */
+    .phone::before, .phone::after { content: ""; position: absolute; left: -10%; right: -10%; bottom: -22px; height: 44px; border-radius: 50%; pointer-events: none; }
+    .phone::before { background: radial-gradient(closest-side, rgba(150, 180, 255, 0.16), transparent); transform: translateZ(-1px); }
+    .phone::after { background: radial-gradient(closest-side, rgba(0, 0, 0, 0.7), transparent); transform: translateX(var(--shx, 40px)) translateZ(-2px); filter: blur(4px); z-index: -1; }
+    .status { display: flex; align-items: center; justify-content: space-between; padding: 12px 22px 6px; font-size: 12.5px; color: #ced4da; font-weight: 600; }
+    .status .icons { display: flex; gap: 6px; align-items: center; }
+    .status svg { width: 15px; height: 15px; }
+    .status .plane { display: none; }
+    body.offline .status .net { display: none; }
+    body.offline .status .plane { display: block; color: var(--flame); }
+    .apphead { display: flex; align-items: center; gap: 10px; padding: 8px 16px 12px; border-bottom: 1px solid #2b3035; }
+    .apphead .dot { width: 30px; height: 30px; border-radius: 50%; background: #343a40; display: grid; place-items: center; }
+    .apphead .dot svg { width: 16px; height: 16px; }
+    .apphead b { display: block; font-size: 15px; color: #f8f9fa; font-weight: 650; }
+    .apphead small { display: block; font-size: 12px; color: #adb5bd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .apphead > span:nth-child(2) { min-width: 0; }
+    .offline-chip { margin-left: auto; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; background: #212529; color: #adb5bd; border: 1px solid #343a40; transition: all 0.4s; white-space: nowrap; }
+    body.offline .offline-chip { color: var(--ink-on-flame); background: var(--flame); border-color: var(--flame); }
+    .chat { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none; }
+    .chat::-webkit-scrollbar { display: none; }
+    .msg { max-width: 86%; padding: 9px 13px; border-radius: 16px; white-space: pre-wrap; overflow-wrap: anywhere; animation: rise 0.45s var(--ease-out) both; }
+    .msg.me { align-self: flex-end; background: #dee2e6; color: #212529; border-bottom-right-radius: 5px; }
+    .msg.ai { align-self: flex-start; background: #24282d; color: #e9ecef; border-bottom-left-radius: 5px; }
+    .msg.note { align-self: center; background: none; color: #adb5bd; font-size: 12px; padding: 2px 6px; text-align: center; }
+    .msg.ai.action { border: 1px solid #495057; }
+    .msg .caret { display: inline-block; width: 7px; height: 1em; vertical-align: -2px; background: #adb5bd; margin-left: 2px; animation: blink 1s steps(2) infinite; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+    @keyframes blink { 50% { opacity: 0; } }
+    .composer { display: flex; gap: 8px; align-items: center; padding: 10px 12px 16px; }
+    .composer input {
+      flex: 1; min-width: 0; height: 42px; border-radius: 21px; border: 1px solid #343a40; background: #212529; color: #f8f9fa;
+      padding: 0 16px; font: inherit; font-size: 14.5px; outline: none;
+    }
+    .composer input::placeholder { color: #868e96; }
+    .composer input:focus { border-color: #868e96; }
+    .composer button { width: 42px; height: 42px; border-radius: 50%; border: 0; display: grid; place-items: center; background: #dee2e6; color: #212529; cursor: pointer; flex: none; }
+    .composer button.mic { background: #2b3035; color: #dee2e6; }
+    .composer button svg { width: 19px; height: 19px; }
+    .composer button:disabled { opacity: 0.5; cursor: default; }
+
+    .tries { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 440px; }
+    .chip {
+      border: 1px solid var(--line); background: rgba(17, 26, 48, 0.75); color: var(--text);
+      border-radius: 999px; padding: 7px 14px; font-size: 15px; cursor: pointer; line-height: 1.3;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      transition: border-color 0.25s, color 0.25s, transform 0.35s var(--ease-out);
+    }
+    .chip:hover { border-color: rgba(255, 176, 74, 0.6); color: var(--lit); transform: translateY(-2px); }
+    .chip:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+    .switch {
+      display: flex; align-items: center; gap: 14px; cursor: pointer; user-select: none;
+      background: rgba(11, 16, 32, 0.8); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px 8px 8px;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .switch .track { width: 52px; height: 30px; border-radius: 999px; background: #2a3550; position: relative; transition: background 0.35s; flex: none; }
+    .switch .knob { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #dfe6f5; transition: transform 0.45s var(--ease-out); display: grid; place-items: center; color: #2a3550; }
+    .switch .knob svg { width: 14px; height: 14px; }
+    .switch input:checked + .track { background: var(--flame); }
+    .switch input:checked + .track .knob { transform: translateX(22px); color: var(--ember); }
+    .switch input:focus-visible + .track { outline: 2px solid var(--flame); outline-offset: 3px; }
+    .switch .label b { display: block; font-size: 15.5px; color: var(--text); font-weight: 600; line-height: 1.3; }
+    .switch .label small { display: block; font-size: 13.5px; color: var(--cold); line-height: 1.3; }
+    .demo-note { color: var(--cold-dim); font-size: 13.5px; text-align: center; margin: 0; max-width: 40ch; }
+
+    /* ---------- Sections ---------- */
+    section { position: relative; }
+    .block { padding: clamp(96px, 14vw, 180px) 0 clamp(64px, 9vw, 120px); }
+    h2 {
+      margin: 0; color: var(--lit); font-weight: 760; font-stretch: 80%;
+      font-size: clamp(36px, 4.8vw, 68px); line-height: 1; letter-spacing: -0.02em; text-wrap: balance; max-width: 18ch;
+    }
+    html[data-lang="bn"] h2 { line-height: 1.18; letter-spacing: 0; }
+    h3 { margin: 0; color: var(--lit); font-weight: 680; font-stretch: 88%; font-size: clamp(22px, 2vw, 27px); line-height: 1.15; }
+    .lede { margin: 22px 0 0; max-width: 58ch; color: var(--text); font-size: clamp(18px, 1.5vw, 21px); }
+    p { margin: 0; }
+    .muted { color: var(--cold); }
+
+    /* Reveal: content is visible by default, motion only adds polish. */
+    .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out); }
+    .js .reveal.in { opacity: 1; transform: none; }
+
+    /* Steps: the light travels along them as you scroll */
+    .steps { margin-top: 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; position: relative; }
+    .steps::before { content: ""; position: absolute; left: 0; right: 0; top: 27px; height: 2px; background: linear-gradient(90deg, var(--flame) calc(var(--p, 0) * 100%), var(--line) calc(var(--p, 0) * 100%)); }
+    .step { padding-right: clamp(16px, 3vw, 40px); position: relative; }
+    .step .n {
+      width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; position: relative;
+      background: var(--night-2); border: 1px solid var(--line); color: var(--cold); margin-bottom: 26px; transition: all 0.6s var(--ease-out);
+    }
+    .step .n svg { width: 24px; height: 24px; }
+    .step.on .n { background: var(--flame); border-color: var(--flame); color: var(--ink-on-flame); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.7); }
+    .step p { color: var(--cold); margin-top: 10px; max-width: 32ch; }
+    .step.on p { color: var(--text); }
+
+    /* Device check: damped instrument needles */
+    .instrument {
+      margin-top: 72px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center;
+      padding: clamp(24px, 3.5vw, 44px); border-radius: 28px;
+      background: linear-gradient(180deg, rgba(17, 26, 48, 0.9), rgba(8, 12, 24, 0.92));
+      border: 1px solid var(--line);
+      box-shadow: var(--sx, -20px) var(--sy, 30px) 60px -30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    .gauges { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 2vw, 24px); }
+    .gauge { text-align: center; }
+    .gauge svg { width: 100%; height: auto; overflow: visible; }
+    .gauge .val { font-size: clamp(20px, 2.2vw, 28px); font-weight: 700; color: var(--lit); font-variant-numeric: tabular-nums; font-stretch: 85%; margin-top: -6px; }
+    .gauge .cap { font-size: 14px; color: var(--cold); text-transform: uppercase; letter-spacing: 0.08em; }
+    .verdict h3 { font-size: clamp(24px, 2.4vw, 32px); }
+    .verdict p { color: var(--cold); margin-top: 12px; font-size: 16.5px; }
+    .verdict .pick { color: var(--flame-hot); }
+
+    /* Model ring */
+    .ringwrap { margin-top: 56px; position: relative; perspective: 1600px; height: 440px; touch-action: pan-y; cursor: grab; user-select: none; }
+    .ringwrap.drag { cursor: grabbing; }
+    .ring { position: absolute; left: 50%; top: 40px; width: 0; height: 0; transform-style: preserve-3d; }
+    .model {
+      position: absolute; left: -140px; top: 0; width: 280px; height: 340px; padding: 26px 24px;
+      border-radius: 22px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      background: linear-gradient(180deg, #172241, #0d1426);
+      border: 1px solid var(--line);
+      display: flex; flex-direction: column; gap: 8px;
+      box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+    }
+    .model .shade { position: absolute; inset: 0; border-radius: inherit; background: #04060c; opacity: var(--shade, 0.5); pointer-events: none; }
+    .model > :not(.shade) { opacity: calc(1 - var(--shade, 0) * 1.15); }
+    .model h3 { font-size: 30px; font-stretch: 80%; }
+    .model dl { margin: auto 0 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 15.5px; }
+    .model dt { color: var(--cold); }
+    .model dd { margin: 0; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+    .model .fit { position: absolute; top: 18px; right: 18px; font-size: 12.5px; padding: 4px 10px; border-radius: 999px; background: var(--flame); color: var(--ink-on-flame); font-weight: 650; }
+    .model.front { border-color: rgba(255, 176, 74, 0.5); }
+    .ringctl { position: absolute; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; gap: 12px; align-items: center; }
+    .ringctl button { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: rgba(17, 26, 48, 0.8); cursor: pointer; display: grid; place-items: center; color: var(--text); }
+    .ringctl button:hover { border-color: var(--flame); color: var(--flame-hot); }
+    .ringctl button svg { width: 20px; height: 20px; }
+    .ringctl span { color: var(--cold); font-size: 15px; min-width: 16ch; text-align: center; }
+
+    /* Language: letters as lit material */
+    .tongue { overflow: clip; }
+    .glyphs {
+      font-size: clamp(120px, 24vw, 340px); line-height: 0.9; font-weight: 800; font-stretch: 75%;
+      color: #1a2443; white-space: nowrap; margin: 0; letter-spacing: -0.01em;
+      user-select: none; pointer-events: none;
+    }
+    .glyphs span { display: inline-block; }
+    .speaks { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 3vw, 40px); }
+    .speak { border-top: 1px solid var(--line); padding-top: 22px; }
+    .speak .kind { color: var(--flame-hot); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; }
+    .speak .said { margin-top: 10px; font-size: 21px; color: var(--text); }
+    .speak .arrow { margin: 12px 0; color: var(--cold-dim); width: 22px; height: 22px; }
+    .speak .back { color: var(--lit); font-size: 19px; }
+    .tryline {
+      margin-top: 56px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center;
+      padding: 10px 10px 10px 22px; border-radius: 20px; background: rgba(11, 16, 32, 0.85); border: 1px solid var(--line); max-width: 760px;
+    }
+    .tryline input { background: none; border: 0; color: var(--text); font: inherit; font-size: 19px; min-width: 0; outline: none; height: 48px; }
+    .tryline input::placeholder { color: var(--cold-dim); }
+    .tryline output { padding: 10px 16px; border-radius: 14px; background: var(--night-3); color: var(--cold); font-size: 16px; white-space: nowrap; transition: background 0.35s, color 0.35s; }
+    .tryline output.hit { background: var(--flame); color: var(--ink-on-flame); font-weight: 650; }
+
+    /* Speak & do */
+    .doer { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
+    .cmds { display: grid; gap: 2px; }
+    .cmd {
+      display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 16px; align-items: center; text-align: left;
+      padding: 16px 18px; border-radius: 16px; border: 1px solid transparent; background: none; cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .cmd:hover, .cmd[aria-pressed="true"] { background: rgba(17, 26, 48, 0.85); border-color: var(--line); }
+    .cmd .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--night-3); display: grid; place-items: center; color: var(--flame-hot); }
+    .cmd .ico svg { width: 22px; height: 22px; }
+    .cmd b { display: block; color: var(--text); font-weight: 600; font-size: 18px; }
+    .cmd small { display: block; color: var(--cold); font-size: 15px; }
+    .cmd .go { color: var(--cold-dim); font-size: 14px; }
+    .cmd[aria-pressed="true"] .go { color: var(--flame-hot); }
+    .result {
+      position: sticky; top: 100px; min-height: 360px; border-radius: 28px; padding: 28px;
+      background: linear-gradient(180deg, rgba(17, 26, 48, 0.92), rgba(8, 12, 24, 0.94)); border: 1px solid var(--line);
+      display: grid; align-content: center; justify-items: center; gap: 20px; text-align: center; overflow: hidden;
+      box-shadow: var(--sx, -20px) var(--sy, 30px) 60px -30px rgba(0, 0, 0, 0.8);
+    }
+    .result .face { width: 168px; height: 168px; }
+    .result .say { font-size: 22px; color: var(--lit); max-width: 24ch; min-height: 2.8em; }
+    .result .say small { display: block; color: var(--cold); font-size: 16px; margin-top: 6px; }
+    .widget {
+      display: flex; align-items: center; gap: 12px; padding: 12px 18px 12px 12px; border-radius: 22px; background: rgba(233, 236, 239, 0.94); color: #212529;
+      box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
+    }
+    .widget .m { width: 40px; height: 40px; border-radius: 50%; background: #212529; color: #f8f9fa; display: grid; place-items: center; }
+    .widget .m svg { width: 20px; height: 20px; }
+    .widget b { font-size: 16px; font-weight: 650; }
+    .voice { margin-top: 28px; padding: 22px 24px; border-radius: 20px; border: 1px solid var(--line); background: rgba(11, 16, 32, 0.7); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
+    .wave { display: flex; gap: 4px; align-items: center; height: 40px; }
+    .wave i { width: 4px; border-radius: 4px; background: var(--flame); height: 30%; animation: wave 1.2s var(--ease-out) infinite; }
+    .wave i:nth-child(2) { animation-delay: 0.1s; } .wave i:nth-child(3) { animation-delay: 0.2s; } .wave i:nth-child(4) { animation-delay: 0.3s; } .wave i:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes wave { 50% { height: 100%; } }
+    .voice p { color: var(--cold); font-size: 16.5px; }
+    .voice b { color: var(--text); font-weight: 600; }
+
+    /* Privacy ledger */
+    .ledger { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
+    .ledger table { width: 100%; border-collapse: collapse; font-size: 18px; }
+    .ledger caption { text-align: left; color: var(--cold); font-size: 15px; padding-bottom: 14px; letter-spacing: 0.02em; }
+    .ledger th, .ledger td { text-align: left; padding: 16px 0; border-bottom: 1px solid var(--line); font-weight: 400; vertical-align: top; }
+    .ledger th { color: var(--text); padding-right: 16px; }
+    .ledger td { color: var(--flame-hot); font-weight: 600; text-align: right; white-space: nowrap; }
+    .ledger td.some { color: var(--cold); font-weight: 400; white-space: normal; }
+    .keeps { display: grid; padding-top: 38px; }
+    .keep { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .keep h3 { font-size: 20px; }
+    .keep p { color: var(--cold); font-size: 16.5px; margin-top: 6px; }
+
+    /* Care + limits */
+    .reacts { margin: 56px 0 0; max-width: 980px; }
+    .react { display: grid; grid-template-columns: minmax(0, 0.9fr) 56px minmax(0, 1.1fr); align-items: center; padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .react dt { color: var(--lit); font-size: clamp(24px, 2.6vw, 36px); font-weight: 720; font-stretch: 80%; line-height: 1.1; }
+    .react .to { height: 2px; background: linear-gradient(90deg, var(--line), var(--flame)); position: relative; }
+    .react .to::after { content: ""; position: absolute; right: 0; top: -4px; width: 10px; height: 10px; border-top: 2px solid var(--flame); border-right: 2px solid var(--flame); transform: rotate(45deg); }
+    .react dd { margin: 0 0 0 20px; color: var(--text); font-size: 18px; }
+    .limits { margin-top: 48px; padding: 28px 30px; border-radius: 22px; border: 1px dashed rgba(147, 166, 201, 0.3); max-width: 900px; }
+    .limits h3 { font-size: 22px; }
+    .limits ul { margin: 14px 0 0; padding-left: 20px; color: var(--cold); display: grid; gap: 8px; font-size: 16.5px; }
+
+    /* Download */
+    .get { text-align: center; padding-bottom: 80px; }
+    .get h2 { margin-inline: auto; max-width: 16ch; }
+    .get .lede { margin-inline: auto; }
+    .get .actions { justify-content: center; }
+    .install { margin: 72px auto 0; max-width: 960px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; text-align: left; counter-reset: s; }
+    .install li { list-style: none; border-top: 2px solid var(--night-3); padding-top: 18px; counter-increment: s; }
+    .install li::before { content: counter(s); display: block; font-size: 15px; color: var(--flame-hot); font-weight: 700; margin-bottom: 8px; }
+    .install b { display: block; color: var(--text); font-weight: 600; }
+    .install p { color: var(--cold); font-size: 15.5px; margin-top: 6px; }
+    .needs { margin-top: 40px; color: var(--cold); font-size: 15.5px; }
+
+    footer { border-top: 1px solid var(--line); padding: 44px 0 56px; background: rgba(11, 16, 32, 0.92); }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: 24px 40px; justify-content: space-between; align-items: center; }
+    footer .by { color: var(--text); font-size: 18px; }
+    footer .links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; }
+    footer .links a { color: var(--cold); text-decoration: none; display: inline-flex; gap: 8px; align-items: center; overflow-wrap: anywhere; }
+    footer .links a:hover { color: var(--flame-hot); }
+    footer .links svg { width: 16px; height: 16px; }
+    footer .small { color: var(--cold-dim); font-size: 14.5px; margin-top: 14px; max-width: 62ch; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 960px) {
+      .hero .wrap { grid-template-columns: 1fr; }
+      .hero { padding-top: 104px; }
+      .hero .sub { max-width: 40ch; }
+      .instrument, .doer, .ledger { grid-template-columns: 1fr; }
+      .hero { padding-top: 76px; }
+      .lampspot-m { display: block; width: 100%; height: 200px; margin-bottom: 4px; }
+      .lampspot-d { display: none; }
+      .stage { grid-template-columns: 1fr; }
+      .phone { grid-column: 1; }
+      .result { position: relative; top: 0; }
+      .install { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .react { grid-template-columns: 1fr; gap: 10px; }
+      .react .to { display: none; }
+      .react dd { margin: 0; }
+      .ringwrap { overflow-x: clip; }
+      .bar nav a.navlink { display: none; }
+    }
+    @media (max-width: 680px) {
+      body { font-size: 17px; }
+      .steps { grid-template-columns: 1fr; gap: 34px; }
+      .steps::before { display: none; }
+      .step .n { margin-bottom: 14px; }
+      .speaks { grid-template-columns: 1fr; }
+      .gauges { gap: 4px; }
+      .install { grid-template-columns: 1fr; }
+      .ringwrap { height: 420px; }
+      .tryline { grid-template-columns: 1fr; padding: 12px; }
+      .tryline output { justify-self: start; }
+      .bar .btn.small { display: none; }
+      .phone { --rx: 0deg; --ry: 0deg; }
+      .lampspot-m { height: 180px; }
+      .model:not(.front) > :not(.shade) { visibility: hidden; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .js .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="lamplight" aria-hidden="true"></div>
+  <div class="torch" aria-hidden="true"></div>
+
+  <header class="bar" id="bar">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Emberwit home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5c3.4 5.4 7.8 8.6 7.8 14.3a7.8 7.8 0 0 1-15.6 0c0-3.4 1.9-5.6 3.3-7.6.8 3 2.2 4.3 4.3 4.6-1-4.4-.4-7.8.2-11.3z" fill="#ffb04a"/><path d="M16 15.5c1.6 2.4 3.2 3.6 3.2 5.9a3.2 3.2 0 0 1-6.4 0c0-1.6 1-2.6 1.7-3.6.3 1 .9 1.4 1.5 1.5-.3-1.4-.2-2.6 0-3.8z" fill="#fff2d6"/></svg>
+        Emberwit
+      </a>
+      <nav aria-label="Sections">
+        <a class="navlink" href="#how" data-i18n="nav.how">How it works</a>
+        <a class="navlink" href="#language" data-i18n="nav.lang">Language</a>
+        <a class="navlink" href="#privacy" data-i18n="nav.privacy">Privacy</a>
+        <a class="btn small" href="https://github.com/tanim913/emberwit/releases/latest" data-i18n="nav.get">Download</a>
+        <div class="langswitch" role="group" aria-label="Language">
+          <button type="button" data-setlang="en" aria-pressed="true">EN</button>
+          <button type="button" data-setlang="bn" aria-pressed="false" lang="bn">বাং</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <div class="wrap">
+        <div>
+          <div class="lampspot lampspot-m" aria-hidden="true"></div>
+          <h1 data-i18n="hero.title" class="lit-text">AI that keeps working when the internet doesn’t.</h1>
+          <p class="altline en" lang="bn">ইন্টারনেট না থাকলেও চলে, আপনার ফোনের ভেতরেই।</p>
+          <p class="altline bn" lang="en">It keeps working with no internet, right inside your phone.</p>
+          <p class="sub" data-i18n="hero.sub">Emberwit runs the AI <b>on your phone itself</b>. Download a model once, then chat in English or বাংলা with no internet, no account, and nothing sent anywhere.</p>
+          <div class="actions">
+            <a class="btn lit-shadow" href="https://github.com/tanim913/emberwit/releases/latest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19.5h14"/></svg>
+              <span data-i18n="hero.cta">Download for Android</span>
+            </a>
+            <a class="btn ghost" href="#how" data-i18n="hero.how">See how it works</a>
+          </div>
+          <p class="fine"><span data-i18n="hero.f1">Free and open source</span><span data-i18n="hero.f2">Android 8.0+</span><span data-i18n="hero.f3">No ads, no tracking</span></p>
+        </div>
+
+        <div class="stage">
+          <div class="lampspot lampspot-d" aria-hidden="true"></div>
+          <div class="phone" id="phone">
+            <div class="screen">
+              <div class="status">
+                <span id="clock">9:41</span>
+                <span class="icons">
+                  <svg class="net" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 20h3v-4H2zm5 0h3v-7H7zm5 0h3V9h-3zm5 0h3V4h-3z"/></svg>
+                  <svg class="net" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.8 16a4.8 4.8 0 0 1 6.4 0"/><circle cx="12" cy="19.3" r="1.2" fill="currentColor"/></svg>
+                  <svg class="plane" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="7" width="17" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="9" width="11" height="6" rx="1"/><rect x="20" y="10" width="2" height="4" rx="1"/></svg>
+                </span>
+              </div>
+              <div class="apphead">
+                <span class="dot"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5c3.4 5.4 7.8 8.6 7.8 14.3a7.8 7.8 0 0 1-15.6 0c0-3.4 1.9-5.6 3.3-7.6.8 3 2.2 4.3 4.3 4.6-1-4.4-.4-7.8.2-11.3z" fill="#dee2e6"/></svg></span>
+                <span><b>Emberwit</b><small data-i18n="phone.model">Qwen3 1.7B · on this phone</small></span>
+                <span class="offline-chip" id="netchip" data-i18n="phone.online">Online</span>
+              </div>
+              <div class="chat" id="chat" aria-live="polite" aria-label="Demo chat"></div>
+              <form class="composer" id="composer" autocomplete="off">
+                <label for="ask" class="sr" style="position:absolute;left:-9999px" data-i18n="phone.label">Message</label>
+                <input id="ask" maxlength="160" data-i18n-ph="phone.ph" placeholder="Message Emberwit">
+                <button type="submit" id="send" aria-label="Send">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <label class="switch">
+            <input type="checkbox" id="offline">
+            <span class="track"><span class="knob"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></span></span>
+            <span class="label"><b data-i18n="switch.title">Turn off the internet</b><small data-i18n="switch.sub">Watch the city go dark. Emberwit keeps answering.</small></span>
+          </label>
+
+          <div class="tries" id="tries" aria-label="Try a message">
+            <button class="chip" type="button" data-try="explain">Explain photosynthesis simply</button>
+            <button class="chip" type="button" data-try="golpo" lang="bn">আমাকে একটা ছোট গল্প বলো</button>
+            <button class="chip" type="button" data-try="kemon">kemon acho?</button>
+            <button class="chip" type="button" data-try="alarm">Set an alarm for 6:30 am</button>
+            <button class="chip" type="button" data-try="torch" lang="bn">টর্চ জ্বালাও</button>
+          </div>
+          <p class="demo-note" data-i18n="phone.note">A demo: replies on this page are written in advance. The app writes its own, on your phone.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="block" id="how">
+      <div class="wrap">
+        <h2 class="reveal" data-i18n="how.title">Download once. Then it’s yours, offline.</h2>
+        <p class="lede reveal" data-i18n="how.lede">Most AI apps send every word you type to a server far away. Emberwit puts the whole AI model inside your phone. The internet is needed one time, to download it.</p>
+
+        <ol class="steps" id="steps" style="padding:0;list-style:none">
+          <li class="step reveal">
+            <div class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 18.5h4"/><path d="M9 9.5h6M9 12.5h4"/></svg></div>
+            <h3 data-i18n="how.s1">It checks your phone</h3>
+            <p data-i18n="how.s1p">Memory, processor and a quick speed test, so it only suggests models your phone can run well.</p>
+          </li>
+          <li class="step reveal">
+            <div class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19.5h14"/></svg></div>
+            <h3 data-i18n="how.s2">You download one model</h3>
+            <p data-i18n="how.s2p">From 0.5 to 2.5 GB, over Wi-Fi if you like. Every file is checked against a signed list before it is used.</p>
+          </li>
+          <li class="step reveal">
+            <div class="n"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+            <h3 data-i18n="how.s3">Chat with no internet</h3>
+            <p data-i18n="how.s3p">Airplane mode, load-shedding, no data pack. It answers anyway, because nothing has to leave the phone.</p>
+          </li>
+        </ol>
+
+        <div class="instrument reveal lit-shadow" id="instrument">
+          <div class="gauges" role="img" aria-labelledby="fitline">
+            <div class="gauge" data-gauge="ram"><svg viewBox="0 0 120 80" aria-hidden="true"></svg><div class="val">–</div><div class="cap" data-i18n="g.ram">Memory</div></div>
+            <div class="gauge" data-gauge="cpu"><svg viewBox="0 0 120 80" aria-hidden="true"></svg><div class="val">–</div><div class="cap" data-i18n="g.cpu">Cores</div></div>
+            <div class="gauge" data-gauge="fit"><svg viewBox="0 0 120 80" aria-hidden="true"></svg><div class="val">–</div><div class="cap" data-i18n="g.fit">Model size</div></div>
+          </div>
+          <div class="verdict">
+            <h3 id="fitline" data-i18n="g.title">Your device, at a glance</h3>
+            <p id="fittext">–</p>
+            <p class="muted" style="font-size:14.5px" data-i18n="g.note">A rough guess from what your browser reports. The app measures your phone properly before it suggests anything.</p>
+          </div>
+        </div>
+
+        <h3 class="reveal" style="margin-top:96px" data-i18n="models.title">Eight models to choose from</h3>
+        <p class="muted reveal" style="margin-top:10px;max-width:56ch" data-i18n="models.lede">Small ones for 2 GB phones, bigger ones that write better Bengali. Drag the ring, or use the arrows.</p>
+        <div class="ringwrap" id="ringwrap" tabindex="0" aria-roledescription="carousel" aria-label="Models">
+          <div class="ring" id="ring"></div>
+          <div class="ringctl">
+            <button type="button" id="prev" aria-label="Previous model"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+            <span id="ringname" aria-live="polite"></span>
+            <button type="button" id="next" aria-label="Next model"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Language -->
+    <section class="block tongue" id="language">
+      <div class="glyphs" id="glyphs" aria-hidden="true" lang="bn"><span>অ</span><span>আ</span><span>ক</span><span>খ</span><span>A</span><span>a</span></div>
+      <div class="wrap">
+        <h2 class="reveal" data-i18n="lang.title">Write the way you talk. It answers the same way.</h2>
+        <p class="lede reveal" data-i18n="lang.lede">Every message is read for its language. English gets English. Bengali gets Bengali, even when you type it in English letters.</p>
+        <div class="speaks">
+          <div class="speak reveal">
+            <div class="kind">English</div>
+            <div class="said">What is the capital of Japan?</div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg>
+            <div class="back">The capital of Japan is Tokyo.</div>
+          </div>
+          <div class="speak reveal">
+            <div class="kind" lang="bn">বাংলা</div>
+            <div class="said" lang="bn">জাপানের রাজধানী কী?</div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg>
+            <div class="back" lang="bn">জাপানের রাজধানী টোকিও।</div>
+          </div>
+          <div class="speak reveal">
+            <div class="kind">Banglish</div>
+            <div class="said">japan er rajdhani ki?</div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg>
+            <div class="back" lang="bn">জাপানের রাজধানী টোকিও।</div>
+          </div>
+        </div>
+        <div class="tryline reveal">
+          <label for="langtry" style="position:absolute;left:-9999px" data-i18n="lang.trylabel">Type anything to see the reply language</label>
+          <input id="langtry" maxlength="200" data-i18n-ph="lang.ph" placeholder="Type anything: “ami bhalo achi”, “hello”, “কেমন আছো”">
+          <output id="langout" for="langtry" data-i18n="lang.wait">Reply language: waiting</output>
+        </div>
+        <p class="muted reveal" style="margin-top:14px;font-size:15px" data-i18n="lang.real">This box runs the same rules the app uses, right here in your browser.</p>
+      </div>
+    </section>
+
+    <!-- Speak and do -->
+    <section class="block" id="do">
+      <div class="wrap">
+        <h2 class="reveal" data-i18n="do.title">Speak to it. It can do things, too.</h2>
+        <p class="lede reveal" data-i18n="do.lede">Tap the mic and talk instead of typing; your phone turns speech into text on the device. Ask for an alarm or the flashlight and Emberwit just does it, in English or Bengali, with no internet.</p>
+        <div class="doer">
+          <div>
+            <div class="cmds" role="group" aria-label="Phone commands">
+              <button class="cmd reveal" type="button" data-cmd="alarm" aria-pressed="false">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 1.8M4 4.5 6.5 2.5M20 4.5l-2.5-2"/></svg></span>
+                <span><b>“Set an alarm for 7 am”</b><small lang="bn">“সকাল ৭টায় অ্যালার্ম দাও”</small></span><span class="go" data-i18n="do.try">Try</span>
+              </button>
+              <button class="cmd reveal" type="button" data-cmd="timer" aria-pressed="false">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5h4M12 2.5V5"/><circle cx="12" cy="13.5" r="8"/><path d="M12 13.5V9"/></svg></span>
+                <span><b>“Timer for 10 minutes”</b><small lang="bn">“১০ মিনিটের টাইমার দাও”</small></span><span class="go" data-i18n="do.try">Try</span>
+              </button>
+              <button class="cmd reveal" type="button" data-cmd="torch" aria-pressed="false">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v4l-2.5 4v10h-5V11L7 7z"/><path d="M12 14v2"/></svg></span>
+                <span><b>“Turn on the flashlight”</b><small lang="bn">“টর্চ জ্বালাও”</small></span><span class="go" data-i18n="do.try">Try</span>
+              </button>
+              <button class="cmd reveal" type="button" data-cmd="open" aria-pressed="false">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><path d="M17 14v6M14 17h6"/></svg></span>
+                <span><b>“Open YouTube”</b><small lang="bn">“ইউটিউব খোলো”</small></span><span class="go" data-i18n="do.try">Try</span>
+              </button>
+            </div>
+            <div class="voice reveal">
+              <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+              <p data-i18n="do.voice"><b>Voice typing stays on the phone.</b> It uses your phone’s own offline speech recognizer, so your voice is never uploaded. English works everywhere; Bengali works if your phone offers it offline.</p>
+            </div>
+          </div>
+          <div class="result lit-shadow reveal" id="result" aria-live="polite">
+            <svg class="face" id="face" viewBox="0 0 160 160" aria-hidden="true"></svg>
+            <p class="say" id="say" data-i18n="do.pick">Pick a command to see what happens.</p>
+            <div class="widget" aria-label="Home-screen widget">
+              <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
+              <span><b data-i18n="do.widget">Ask Emberwit</b><br><small style="color:#495057;font-size:13px" data-i18n="do.widgetsub">Home-screen widget: one tap to talk</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="block" id="privacy">
+      <div class="wrap">
+        <h2 class="reveal" data-i18n="priv.title">What happens on your phone stays on your phone.</h2>
+        <p class="lede reveal" data-i18n="priv.lede">Not a promise in a policy. It is how the app is built: there is no server to send your chats to.</p>
+        <div class="ledger">
+          <table class="reveal">
+            <caption data-i18n="priv.cap">What leaves your phone</caption>
+            <tbody>
+              <tr><th data-i18n="priv.r1">Your messages and the replies</th><td data-i18n="priv.never">Never</td></tr>
+              <tr><th data-i18n="priv.r2">Your voice</th><td data-i18n="priv.never">Never</td></tr>
+              <tr><th data-i18n="priv.r3">Usage statistics, crash reports, ads ID</th><td data-i18n="priv.none">None collected</td></tr>
+              <tr><th data-i18n="priv.r4">Name, email, phone number</th><td data-i18n="priv.noacc">No account exists</td></tr>
+              <tr><th data-i18n="priv.r5">Internet use</th><td class="some" data-i18n="priv.r5v">Only to fetch the model list and download the models you pick</td></tr>
+            </tbody>
+          </table>
+          <div class="keeps">
+            <div class="keep reveal"><h3 data-i18n="priv.k1">Chats are encrypted</h3><p data-i18n="priv.k1p">History is stored in an encrypted database, with the key kept in your phone’s secure storage.</p></div>
+            <div class="keep reveal"><h3 data-i18n="priv.k2">Optional app lock</h3><p data-i18n="priv.k2p">Open with your phone’s PIN or fingerprint. The screen is hidden from the recent-apps view while locked.</p></div>
+            <div class="keep reveal"><h3 data-i18n="priv.k3">Backups you control</h3><p data-i18n="priv.k3p">Export your chats as an encrypted file with your own password, and import them on another phone.</p></div>
+            <div class="keep reveal"><h3 data-i18n="priv.k4">Even this website</h3><p data-i18n="priv.k4p">No cookies, no analytics and no third-party requests. Fonts and code are served from this site only.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Care and limits -->
+    <section class="block" id="care">
+      <div class="wrap">
+        <h2 class="reveal" data-i18n="care.title">Gentle on your phone, honest about limits.</h2>
+        <dl class="reacts">
+          <div class="react reveal"><dt data-i18n="care.c1">Phone gets hot</dt><span class="to" aria-hidden="true"></span><dd data-i18n="care.c1p">Emberwit slows down or pauses instead of cooking it.</dd></div>
+          <div class="react reveal"><dt data-i18n="care.c2">Battery runs low</dt><span class="to" aria-hidden="true"></span><dd data-i18n="care.c2p">It takes it easy, and tells you why.</dd></div>
+          <div class="react reveal"><dt data-i18n="care.c3">Memory runs short</dt><span class="to" aria-hidden="true"></span><dd data-i18n="care.c3p">The model is put away, and loaded again when you need it.</dd></div>
+        </dl>
+        <div class="limits reveal">
+          <h3 data-i18n="lim.title">What it can’t do</h3>
+          <ul>
+            <li data-i18n="lim.1">It can’t search the web or know today’s news. It knows what the model learned.</li>
+            <li data-i18n="lim.2">Small models make mistakes. Check anything important.</li>
+            <li data-i18n="lim.3">The biggest models need about 6 GB of memory; the smallest runs on 2 GB.</li>
+            <li data-i18n="lim.4">Bengali voice typing depends on your phone; many phones only offer English offline.</li>
+            <li data-i18n="lim.5">Android only for now, from GitHub. Not on the Play Store yet.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section class="block get" id="download">
+      <div class="wrap">
+        <h2 class="reveal" data-i18n="get.title">Keep a light on in your pocket.</h2>
+        <p class="lede reveal" data-i18n="get.lede">Free, open source, and yours. Download the app, pick a model, and you’re ready for the next time the internet goes out.</p>
+        <div class="actions reveal">
+          <a class="btn lit-shadow" href="https://github.com/tanim913/emberwit/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19.5h14"/></svg>
+            <span data-i18n="hero.cta">Download for Android</span>
+          </a>
+          <a class="btn ghost" href="https://github.com/tanim913/emberwit" data-i18n="get.src">View the source</a>
+        </div>
+        <ol class="install">
+          <li class="reveal"><b data-i18n="get.i1">Download the APK</b><p data-i18n="get.i1p">Open the release page on your phone and tap the file ending in <i>arm64-v8a.apk</i>.</p></li>
+          <li class="reveal"><b data-i18n="get.i2">Allow the install</b><p data-i18n="get.i2p">Android asks once to allow installs from your browser. Allow it, then tap Install.</p></li>
+          <li class="reveal"><b data-i18n="get.i3">Pick a model</b><p data-i18n="get.i3p">Emberwit checks your phone and suggests a model. Download it, ideally on Wi-Fi.</p></li>
+          <li class="reveal"><b data-i18n="get.i4">Go offline</b><p data-i18n="get.i4p">That’s it. Turn the internet off and keep chatting.</p></li>
+        </ol>
+        <p class="needs reveal" data-i18n="get.needs">Needs Android 8.0 or newer, a 64-bit phone, and at least 2 GB of memory. Each release lists SHA-256 checksums so you can verify the file.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <p class="by"><span data-i18n="foot.by">Built by</span> <b>Azizullah Tanim</b></p>
+        <p class="links">
+          <a href="https://github.com/tanim913/emberwit"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>github.com/tanim913/emberwit</a>
+          <a href="mailto:kmazizullahtanim@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>kmazizullahtanim@gmail.com</a>
+          <a href="https://github.com/tanim913/emberwit/blob/main/docs/PRIVACY_POLICY.md" data-i18n="foot.privacy">Privacy policy</a>
+        </p>
+        <p class="small" data-i18n="foot.small">Open source under the MIT license. Model files have their own licenses (Apache 2.0, MIT, Gemma Terms, Llama 3.2 Community License), shown in the app before you download.</p>
+      </div>
+      <a class="btn" href="https://github.com/tanim913/emberwit/releases/latest" data-i18n="hero.cta">Download for Android</a>
+    </div>
+  </footer>
+
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="site/vendor/lenis.min.js" defer></script>
+  <script type="module" src="site/app.js"></script>
+</body>
+</html>

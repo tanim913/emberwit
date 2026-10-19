@@ -1,0 +1,128 @@
+[
+  {
+    "path": "pubspec.yaml",
+    "before_sha256": "0809c02920ef5fd11bb3e58e0cce70c95c7f538be7bea603601a1cddba382db3",
+    "after_sha256": "78bcb93d6640c596cb3a6d78ee490c6a4d943d3486b13dccfd079f57eaff3830",
+    "status": "modified"
+  },
+  {
+    "path": "pubspec.lock",
+    "before_sha256": "3318db12c6dd5de55c6076b68b7f905a65f41f99973b26ffe589a8c189a3fe37",
+    "after_sha256": "2cbcf181e5aeeaa829a83d1c8fe71ecd5efd6ecec3651912c33722216a3bb8a2",
+    "status": "modified"
+  },
+  {
+    "path": "docs/DEPENDENCIES.md",
+    "before_sha256": "c95dd91af150f5575fc7deb6c05388a916ff8c6ef5d29ed106fc70d4d3a6db8e",
+    "after_sha256": "e4e88d5c0a6177812549d51d27cacc5b6d3d64fd1f979507ba87e62dcd640aa0",
+    "status": "modified"
+  },
+  {
+    "path": "lib/features/chat/presentation/widgets/message_view.dart",
+    "before_sha256": "39bd7fd22962660601f0cae2ecb2b6d16defbdad75913af825bb9e3f5b8d0b3d",
+    "after_sha256": "5ab72e10fe1f45e188b5e1116a19614dc6b8194723f9433d3a5f34784f682604",
+    "status": "modified"
+  },
+  {
+    "path": "lib/features/model_manager/presentation/models_controller.dart",
+    "before_sha256": "12fb229bd3afa11e879d1866a3374a35c61a18b9cc80f0bf02f0e88222ea82fe",
+    "after_sha256": "c473487142b028ed8b3e2da0302bb5a94c3e9afd5b00c237d40a72c2296af87b",
+    "status": "modified"
+  },
+  {
+    "path": "lib/features/model_manager/presentation/models_page.dart",
+    "before_sha256": "bad2d8545cf4092b21b384a64520af28e7a2cf0a288162d7768de0cc51b7d22b",
+    "after_sha256": "9cdf94ea24811ef692c225bebe190c3e0ac3cf0b1d6dbe93d9ff7004fbf719ba",
+    "status": "modified"
+  },
+  {
+    "path": "lib/l10n/arb/app_en.arb",
+    "before_sha256": "576e6feb43dbfe0e8bb14f887514ab578f408be812b9796eea4082d62534c54e",
+    "after_sha256": "d06caf5dc542d16b2216e00058ab87f5a1e75b13e5d320cf44146f246af1a9f6",
+    "status": "modified"
+  },
+  {
+    "path": "lib/l10n/arb/app_bn.arb",
+    "before_sha256": "b83fb009668fd2dd2ca75fa1ec676c6acdbbebad5e65b8ec14c0d5693adf59e8",
+    "after_sha256": "3862642cf8a9fd765356f85d715bbc8654495c5e31b0ec634103281c01734544",
+    "status": "modified"
+  },
+  {
+    "path": "test/features/model_manager/presentation/models_page_test.dart",
+    "before_sha256": "2f739c37bfe9983050d3ce26fb4707b4e0261176c43ebe4eeebc7f7b43cf9533",
+    "after_sha256": "6ef367dfe354270cd33b28189f9c8b8b338cda98edb551245d4436ba997dcfbc",
+    "status": "modified"
+  },
+  {
+    "path": "test/goldens/goldens/models_bn_dark.png",
+    "before_sha256": "90a3dd840b6dd200099106ef6f4134bdccfffd894399cf519cf7c282aa9ebe56",
+    "after_sha256": "bca5d57d30a0c94804ce9746e7e525a7f5bcf6553f89d668280ced3afb527adf",
+    "status": "modified"
+  },
+  {
+    "path": "test/goldens/goldens/models_bn_light.png",
+    "before_sha256": "4e4c00ced4eed27e7db1334a88c925ab5ac652de03e951f8d62045e54ffa5611",
+    "after_sha256": "dabadb1c81705a021b8596cc3b984c89fbd4c2e57557a1b440dd384b840952aa",
+    "status": "modified"
+  },
+  {
+    "path": "test/goldens/goldens/models_en_light.png",
+    "before_sha256": "cd6b894de01e80d56757a55cba66773f21bc59d72819adfe5d21dd937c648759",
+    "after_sha256": "5b9c43d5523bf64558a48877cf586c33e56a38b197a9b60eec30879c4ec77350",
+    "status": "modified"
+  },
+  {
+    "path": "test/goldens/goldens/models_en_dark.png",
+    "before_sha256": "417684bf18d7283fd9316f9acddc302aaa36cb810c09b1bc7a8f476566e8f85a",
+    "after_sha256": "eedac8c180c3e163f5de22285764fc0027be212d951df895371b9c50f01dcdc7",
+    "status": "modified"
+  },
+  {
+    "path": "lib/features/chat/presentation/widgets/reply_math.dart",
+    "before_sha256": null,
+    "after_sha256": "f57716ed09b8edf34ee3033505235d7287895d2afe6d5d37422414a614825c5a",
+    "status": "added"
+  },
+  {
+    "path": "test/features/chat/presentation/reply_math_test.dart",
+    "before_sha256": null,
+    "after_sha256": "cdf5f2d97c6e00f21538db532b5953c7024ebd781dcedb387954036ad2aea090",
+    "status": "added"
+  },
+  {
+    "path": "test/features/model_manager/presentation/models_state_test.dart",
+    "before_sha256": null,
+    "after_sha256": "21d89596d5dfa180a61c0e100d78fe04b4aef09bb0e3fd6a6ea2d99367aca7d8",
+    "status": "added"
+  },
+  {
+    "path": "assets/fonts/KaTeX-LICENSE.txt",
+    "before_sha256": null,
+    "after_sha256": "7f3c67871e011442fe84c015d3e92d8c2f714120f27e6e56097ec2595dec9478",
+    "status": "added"
+  },
+  {
+    "path": "test/goldens/goldens/math_reply_en_light.png",
+    "before_sha256": null,
+    "after_sha256": "02a4770ca452baa450005bc2b475381f6f5ce991cb378273cbedabc862808be0",
+    "status": "added"
+  },
+  {
+    "path": "test/goldens/goldens/math_reply_en_dark.png",
+    "before_sha256": null,
+    "after_sha256": "9d335cb471b4702f5e34050b43191330043c51707ef5cec416c8ff916248324f",
+    "status": "added"
+  },
+  {
+    "path": "test/goldens/goldens/math_reply_bn_dark.png",
+    "before_sha256": null,
+    "after_sha256": "9d335cb471b4702f5e34050b43191330043c51707ef5cec416c8ff916248324f",
+    "status": "added"
+  },
+  {
+    "path": "test/goldens/goldens/math_reply_bn_light.png",
+    "before_sha256": null,
+    "after_sha256": "02a4770ca452baa450005bc2b475381f6f5ce991cb378273cbedabc862808be0",
+    "status": "added"
+  }
+]

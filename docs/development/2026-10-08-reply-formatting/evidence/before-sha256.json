@@ -1,0 +1,16 @@
+{
+  "pubspec.yaml": "0809c02920ef5fd11bb3e58e0cce70c95c7f538be7bea603601a1cddba382db3",
+  "pubspec.lock": "3318db12c6dd5de55c6076b68b7f905a65f41f99973b26ffe589a8c189a3fe37",
+  "docs/DEPENDENCIES.md": "c95dd91af150f5575fc7deb6c05388a916ff8c6ef5d29ed106fc70d4d3a6db8e",
+  "lib/features/chat/presentation/widgets/message_view.dart": "39bd7fd22962660601f0cae2ecb2b6d16defbdad75913af825bb9e3f5b8d0b3d",
+  "lib/features/model_manager/presentation/models_controller.dart": "12fb229bd3afa11e879d1866a3374a35c61a18b9cc80f0bf02f0e88222ea82fe",
+  "lib/features/model_manager/presentation/models_page.dart": "bad2d8545cf4092b21b384a64520af28e7a2cf0a288162d7768de0cc51b7d22b",
+  "lib/l10n/arb/app_en.arb": "576e6feb43dbfe0e8bb14f887514ab578f408be812b9796eea4082d62534c54e",
+  "lib/l10n/arb/app_bn.arb": "b83fb009668fd2dd2ca75fa1ec676c6acdbbebad5e65b8ec14c0d5693adf59e8",
+  "test/features/chat/presentation/message_view_test.dart": "03c9ec98139b4c88cbb37432dca13216eabb11e5437aaa9f230d5afd4e47a350",
+  "test/features/model_manager/presentation/models_page_test.dart": "2f739c37bfe9983050d3ce26fb4707b4e0261176c43ebe4eeebc7f7b43cf9533",
+  "test/goldens/goldens/models_bn_dark.png": "90a3dd840b6dd200099106ef6f4134bdccfffd894399cf519cf7c282aa9ebe56",
+  "test/goldens/goldens/models_bn_light.png": "4e4c00ced4eed27e7db1334a88c925ab5ac652de03e951f8d62045e54ffa5611",
+  "test/goldens/goldens/models_en_light.png": "cd6b894de01e80d56757a55cba66773f21bc59d72819adfe5d21dd937c648759",
+  "test/goldens/goldens/models_en_dark.png": "417684bf18d7283fd9316f9acddc302aaa36cb810c09b1bc7a8f476566e8f85a"
+}

@@ -1,0 +1,105 @@
+# Codemagic release workflows. Secrets live in Codemagic environment groups,
+# never in this file. See docs/RELEASING.md.
+#
+# Group "emberwit_android":
+#   ANDROID_KEYSTORE_B64     base64 of the upload keystore (.jks)
+#   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+#   PLAY_SERVICE_ACCOUNT_JSON  Google Play service account JSON
+# Group "emberwit_ios": App Store Connect integration "emberwit_asc" and
+#   automatic code signing for app.emberwit (distribution: app_store).
+
+definitions:
+  flutter: &flutter 3.47.3
+  scripts:
+    - &submodules
+      name: Fetch llama.cpp
+      script: git submodule update --init --recursive
+    - &prepare
+      name: Code generation and benchmark model
+      script: |
+        flutter pub get --enforce-lockfile
+        tool/codegen.sh
+        tool/fetch_benchmark_model.sh
+    - &tests
+      name: Analyze and test
+      script: |
+        flutter analyze --fatal-infos
+        flutter test --exclude-tags native,golden
+
+workflows:
+  android-release:
+    name: Android release (Play internal)
+    instance_type: linux_x2
+    max_build_duration: 90
+    environment:
+      flutter: *flutter
+      java: 17
+      groups: [emberwit_android]
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: "v*"
+    scripts:
+      - *submodules
+      - name: Release signing
+        script: |
+          mkdir -p "$HOME/.emberwit-release"
+          echo "$ANDROID_KEYSTORE_B64" | base64 --decode > "$HOME/.emberwit-release/upload.jks"
+          cat > "$HOME/.emberwit-release/key.properties" <<PROPS
+          storeFile=$HOME/.emberwit-release/upload.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          PROPS
+      - *prepare
+      - *tests
+      - name: Build bundle and audit
+        script: |
+          tool/build_android.sh prod appbundle
+          tool/build_android.sh prod apk
+          STRICT=1 tool/security_audit.sh build/app/outputs/flutter-apk/app-prod-release.apk
+    artifacts:
+      - build/app/outputs/bundle/prodRelease/*.aab
+      - build/app/outputs/mapping/prodRelease/mapping.txt
+      - build/symbols/**
+    publishing:
+      google_play:
+        credentials: $PLAY_SERVICE_ACCOUNT_JSON
+        track: internal
+        submit_as_draft: true
+
+  ios-release:
+    name: iOS release (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    integrations:
+      app_store_connect: emberwit_asc
+    environment:
+      flutter: *flutter
+      xcode: latest
+      groups: [emberwit_ios]
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: app.emberwit
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: "v*"
+    scripts:
+      - *submodules
+      - name: Signing profiles
+        script: xcode-project use-profiles
+      - *prepare
+      - *tests
+      - name: Build IPA
+        script: |
+          flutter build ipa --release --flavor prod \
+            --obfuscate --split-debug-info=build/symbols/prod-ios \
+            --export-options-plist="$HOME/export_options.plist"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/symbols/**
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

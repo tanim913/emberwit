@@ -1,0 +1,348 @@
+import 'package:emberwit/app/theme/app_theme.dart';
+import 'package:emberwit/core/catalog/catalog_repository.dart';
+import 'package:emberwit/core/catalog/model_catalog.dart';
+import 'package:emberwit/core/device/device_profile_repository.dart';
+import 'package:emberwit/core/errors/app_failure.dart';
+import 'package:emberwit/core/models/model_library.dart';
+import 'package:emberwit/core/providers/core_providers.dart';
+import 'package:emberwit/core/result/result.dart';
+import 'package:emberwit/features/model_catalog/data/catalog_trust.dart';
+import 'package:emberwit/features/model_catalog/data/signed_catalog.dart';
+import 'package:emberwit/features/model_manager/presentation/models_page.dart';
+import 'package:emberwit/l10n/gen/app_localizations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import '../../../fixtures/device_fixtures.dart';
+import '../../../helpers/preferences.dart';
+import '../../../helpers/test_app.dart';
+import '../../device_profiler/fakes.dart';
+import '../fakes.dart';
+
+late ModelCatalog _seed;
+
+InstalledModel _installed(CatalogEntry entry) => InstalledModel(
+  id: entry.id,
+  displayName: entry.displayName,
+  fileName: '${entry.id}.gguf',
+  sizeBytes: entry.fileSizeBytes,
+  sha256: entry.sha256,
+  verification: ModelVerification.verified,
+  catalogEntry: entry,
+  installedAt: DateTime.utc(2026, 9, 24),
+);
+
+Future<void> _pump(
+  WidgetTester tester, {
+  required FakeModelLibrary library,
+  CatalogSource source = CatalogSource.remote,
+  Result<CatalogSnapshot>? refresh,
+  Locale locale = const Locale('en'),
+  ThemeMode themeMode = ThemeMode.light,
+  double height = 5200,
+}) async {
+  tester.view
+    ..physicalSize = Size(1080, height)
+    ..devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
+  final snapshot = CatalogSnapshot(
+    catalog: _seed,
+    source: source,
+    loadedAt: DateTime.utc(2026, 9, 24),
+  );
+  final preferences = await tester.runAsync(inMemoryPreferences);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        ...baseOverrides(),
+        sharedPreferencesProvider.overrideWithValue(preferences!),
+        catalogRepositoryProvider.overrideWithValue(
+          FakeCatalogRepository(snapshot, refreshResult: refresh),
+        ),
+        modelLibraryProvider.overrideWithValue(library),
+        deviceProfileRepositoryProvider.overrideWithValue(
+          FakeDeviceProfileRepository(
+            cached: profile(
+              totalRamBytes: (5.6 * gib).round(),
+              freeStorageBytes: 20 * gib,
+              benchmark: benchmarkAt(70),
+            ),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode: themeMode,
+        locale: locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: const ModelsPage(),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final bytes = await rootBundle.load(bundledCatalogAsset);
+    _seed = (await SignedCatalogVerifier(
+      trustedCatalogKeys,
+    ).verify(bytes.buffer.asUint8List())).valueOrNull!;
+  });
+
+  testWidgets('lists catalog models with recommendations for this phone', (
+    tester,
+  ) async {
+    await _pump(tester, library: FakeModelLibrary());
+    expect(find.text('Available to download'), findsOneWidget);
+    expect(find.text('Qwen3 0.6B'), findsOneWidget);
+    expect(find.text('Recommended'), findsWidgets);
+    expect(find.text('Not supported'), findsWidgets);
+    expect(
+      find.textContaining('Bengali: good'),
+      findsWidgets,
+      reason: 'Bengali quality is shown for every model',
+    );
+    expect(
+      find.text('No models on this phone yet · 21.5 GB free'),
+      findsOneWidget,
+    );
+    // Models that cannot run have their download disabled.
+    final qwen4bButton = find.byKey(const Key('download-qwen3-4b-q4_k_m'));
+    await tester.scrollUntilVisible(qwen4bButton, 400);
+    final qwen4b = tester.widget<FilledButton>(qwen4bButton);
+    expect(qwen4b.onPressed, isNull);
+  });
+
+  testWidgets('downloads directly when no license agreement is needed', (
+    tester,
+  ) async {
+    final library = FakeModelLibrary();
+    await _pump(tester, library: library);
+    await tester.tap(find.byKey(const Key('download-qwen3-0.6b-q4_k_m')));
+    await tester.pumpAndSettle();
+    expect(library.calls, ['download:qwen3-0.6b-q4_k_m']);
+  });
+
+  testWidgets('asks to accept restrictive licenses first', (tester) async {
+    final library = FakeModelLibrary();
+    await _pump(tester, library: library);
+    final button = find.byKey(const Key('download-llama3.2-1b-q4_k_m'));
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Llama 3.2 Community License'), findsWidgets);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(library.calls, isEmpty);
+
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('accept-license')));
+    await tester.pumpAndSettle();
+    expect(library.calls, ['download:llama3.2-1b-q4_k_m']);
+  });
+
+  testWidgets('shows download progress with speed and time left', (
+    tester,
+  ) async {
+    final library = FakeModelLibrary(
+      const LibraryState(
+        downloads: {
+          'qwen3-1.7b-q4_k_m': DownloadState(
+            modelId: 'qwen3-1.7b-q4_k_m',
+            phase: DownloadPhase.downloading,
+            progress: 0.45,
+            bytesPerSecond: 3200000,
+            remaining: Duration(minutes: 4, seconds: 20),
+          ),
+        },
+      ),
+    );
+    await _pump(tester, library: library);
+    expect(find.text('Downloading'), findsOneWidget);
+    expect(find.text('45% · 3.2 MB/s · 4 min left'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('pause-qwen3-1.7b-q4_k_m')));
+    await tester.tap(find.byKey(const Key('cancel-qwen3-1.7b-q4_k_m')));
+    expect(library.calls, [
+      'pause:qwen3-1.7b-q4_k_m',
+      'cancel:qwen3-1.7b-q4_k_m',
+    ]);
+    // Not offered for download while downloading.
+    expect(find.byKey(const Key('download-qwen3-1.7b-q4_k_m')), findsNothing);
+  });
+
+  testWidgets('failed downloads explain why and can be retried', (
+    tester,
+  ) async {
+    final library = FakeModelLibrary(
+      const LibraryState(
+        downloads: {
+          'qwen3-0.6b-q4_k_m': DownloadState(
+            modelId: 'qwen3-0.6b-q4_k_m',
+            phase: DownloadPhase.failed,
+            failure: DownloadFailure(DownloadFailureReason.hashMismatch),
+          ),
+        },
+      ),
+    );
+    await _pump(tester, library: library);
+    expect(find.textContaining('damaged or altered'), findsOneWidget);
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+    expect(library.calls, [
+      'cancel:qwen3-0.6b-q4_k_m',
+      'download:qwen3-0.6b-q4_k_m',
+    ]);
+  });
+
+  testWidgets('installed models can be deleted after confirmation', (
+    tester,
+  ) async {
+    final entry = _seed.entry('qwen3-0.6b-q4_k_m')!;
+    final library = FakeModelLibrary(
+      LibraryState(installed: [_installed(entry)]),
+    );
+    await _pump(tester, library: library);
+    expect(find.text('On this phone'), findsOneWidget);
+    expect(find.text('Verified · 0.5 GB'), findsOneWidget);
+    expect(find.byKey(const Key('download-qwen3-0.6b-q4_k_m')), findsNothing);
+    await tester.tap(find.byKey(const Key('delete-qwen3-0.6b-q4_k_m')));
+    await tester.pumpAndSettle();
+    expect(find.text('Delete Qwen3 0.6B?'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('confirm-delete')));
+    await tester.pumpAndSettle();
+    expect(library.calls, ['delete:qwen3-0.6b-q4_k_m']);
+  });
+
+  testWidgets('import errors are explained', (tester) async {
+    final library = FakeModelLibrary()
+      ..nextFailure = const ImportFailure(ImportFailureReason.notGguf);
+    await _pump(tester, library: library);
+    await tester.tap(find.byKey(const Key('import-model')));
+    await tester.pumpAndSettle();
+    expect(library.calls, ['import']);
+    expect(find.text('This file is not a GGUF model.'), findsOneWidget);
+  });
+
+  testWidgets('offline catalogs say so; signature failures are shown', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      library: FakeModelLibrary(),
+      source: CatalogSource.bundled,
+      refresh: const Err(CatalogFailure(CatalogFailureReason.network)),
+    );
+    expect(find.textContaining('built-in model list'), findsOneWidget);
+    expect(find.textContaining('Could not reach'), findsNothing);
+
+    await _pump(
+      tester,
+      library: FakeModelLibrary(),
+      source: CatalogSource.cache,
+      refresh: const Err(CatalogFailure(CatalogFailureReason.invalidSignature)),
+    );
+    expect(find.textContaining('saved model list'), findsOneWidget);
+    expect(find.textContaining('security check'), findsOneWidget);
+  });
+
+  testWidgets('the Wi-Fi only switch is on by default and persists', (
+    tester,
+  ) async {
+    await _pump(tester, library: FakeModelLibrary());
+    SwitchListTile wifi() =>
+        tester.widget<SwitchListTile>(find.byKey(const Key('wifi-only')));
+    expect(wifi().value, isTrue);
+    await tester.tap(find.byKey(const Key('wifi-only')));
+    await tester.pumpAndSettle();
+    expect(wifi().value, isFalse);
+  });
+
+  group('status text', () {
+    late AppLocalizations l10n;
+    setUpAll(
+      () async =>
+          l10n = await AppLocalizations.delegate.load(const Locale('en')),
+    );
+
+    test('describes every phase', () {
+      String text(DownloadPhase phase) => downloadStatusText(
+        l10n,
+        DownloadState(modelId: 'm', phase: phase, progress: 0.5),
+      );
+      expect(text(DownloadPhase.queued), 'Waiting to start…');
+      expect(text(DownloadPhase.waitingForWifi), 'Waiting for Wi-Fi…');
+      expect(text(DownloadPhase.verifying), 'Checking the file…');
+      expect(text(DownloadPhase.paused), 'Paused · 50%');
+      expect(text(DownloadPhase.downloading), '50%');
+      expect(text(DownloadPhase.failed), '');
+    });
+
+    test('formats time left', () {
+      expect(
+        remainingText(l10n, const Duration(seconds: 20)),
+        'Less than a minute left',
+      );
+      expect(remainingText(l10n, const Duration(minutes: 1)), '1 min left');
+      expect(
+        remainingText(l10n, const Duration(hours: 1, minutes: 20)),
+        '1 h 20 min left',
+      );
+    });
+
+    test('names every language quality', () {
+      expect(
+        LanguageQuality.values.map((q) => languageQualityText(l10n, q)).toSet(),
+        hasLength(LanguageQuality.values.length),
+      );
+    });
+  });
+
+  group('goldens', () {
+    for (final locale in const [Locale('en'), Locale('bn')]) {
+      for (final mode in const [ThemeMode.light, ThemeMode.dark]) {
+        testWidgets(
+          'models ${locale.languageCode} ${mode.name}',
+          tags: ['golden'],
+          (tester) async {
+            final entry = _seed.entry('qwen3-0.6b-q4_k_m')!;
+            await _pump(
+              tester,
+              library: FakeModelLibrary(
+                LibraryState(
+                  installed: [_installed(entry)],
+                  downloads: const {
+                    'gemma3-1b-q4_k_m': DownloadState(
+                      modelId: 'gemma3-1b-q4_k_m',
+                      phase: DownloadPhase.downloading,
+                      progress: 0.62,
+                      bytesPerSecond: 4100000,
+                      remaining: Duration(minutes: 1, seconds: 10),
+                    ),
+                  },
+                ),
+              ),
+              locale: locale,
+              themeMode: mode,
+              height: 2600,
+            );
+            await expectLater(
+              find.byType(ModelsPage),
+              matchesGoldenFile(
+                '../../../goldens/goldens/'
+                'models_${locale.languageCode}_${mode.name}.png',
+              ),
+            );
+          },
+        );
+      }
+    }
+  });
+}

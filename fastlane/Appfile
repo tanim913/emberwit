@@ -1,0 +1,5 @@
+# Store identifiers. Credentials come from environment variables, never from
+# this repository (see docs/RELEASING.md).
+package_name("app.emberwit")
+app_identifier("app.emberwit")
+json_key_file(ENV["PLAY_JSON_KEY_PATH"]) if ENV["PLAY_JSON_KEY_PATH"]

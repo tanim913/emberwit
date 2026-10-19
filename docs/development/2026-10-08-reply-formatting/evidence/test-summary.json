@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-08",
+  "timezone": "Asia/Dhaka",
+  "app_tests": {
+    "passed": 508,
+    "failed": 0,
+    "success": true
+  },
+  "focused_tests": {
+    "passed": 38,
+    "failed": 0
+  },
+  "ffi_package_tests": {
+    "passed": 22,
+    "failed": 0
+  },
+  "golden_generation": {
+    "passed": 8,
+    "failed": 0
+  },
+  "app_native_engine_tests": {
+    "passed": 3,
+    "failed": 0
+  },
+  "static_analysis": {
+    "result": "passed",
+    "issues": 0
+  },
+  "ui_detector": {
+    "findings": 0,
+    "note": "Mechanical detector has limited Dart coverage; widget checks and visual inspection are primary evidence."
+  },
+  "font_license": {
+    "notice_bundled": true
+  },
+  "format": {
+    "files": 242,
+    "changed": 0,
+    "result": "passed"
+  },
+  "existing_dependencies": {
+    "upgraded": 0,
+    "removed": 0
+  },
+  "android_build": {
+    "result": "passed",
+    "artifact": "build/app/outputs/flutter-apk/app-dev-debug.apk",
+    "architectures": [
+      "arm64-v8a",
+      "x86_64"
+    ]
+  }
+}

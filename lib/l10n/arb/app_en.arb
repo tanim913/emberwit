@@ -1,0 +1,2044 @@
+{
+  "@@locale": "en",
+  "appTagline": "Your private AI assistant. Works without internet.",
+  "@appTagline": {
+    "description": "One line product promise shown under the app name."
+  },
+  "welcomeTitle": "Welcome to {appName}",
+  "@welcomeTitle": {
+    "description": "Heading of the welcome screen.",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Emberwit"
+      }
+    }
+  },
+  "welcomeBody": "{appName} runs AI models directly on your phone. Once a model is downloaded, every conversation happens on this device.",
+  "@welcomeBody": {
+    "description": "Explains what the app does on the welcome screen.",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Emberwit"
+      }
+    }
+  },
+  "privacyLine": "Your chats never leave this phone.",
+  "@privacyLine": {
+    "description": "Short privacy promise."
+  },
+  "offlineLine": "No account. No tracking. No internet needed to chat.",
+  "@offlineLine": {
+    "description": "Short statement that the app works offline without accounts or tracking."
+  },
+  "flavorBannerDev": "DEV",
+  "@flavorBannerDev": {
+    "description": "Corner banner label on development builds. Keep very short."
+  },
+  "flavorBannerStaging": "STAGING",
+  "@flavorBannerStaging": {
+    "description": "Corner banner label on staging builds. Keep very short."
+  },
+  "notFoundTitle": "Page not found",
+  "@notFoundTitle": {
+    "description": "Title of the screen shown for an unknown route."
+  },
+  "notFoundBody": "This screen does not exist.",
+  "@notFoundBody": {
+    "description": "Body of the screen shown for an unknown route."
+  },
+  "goHome": "Go to home",
+  "@goHome": {
+    "description": "Button that navigates to the home screen."
+  },
+  "configurationErrorTitle": "Something is wrong with this build",
+  "@configurationErrorTitle": {
+    "description": "Title shown when the app was built with an invalid configuration."
+  },
+  "configurationErrorBody": "Please reinstall the app from the official store.",
+  "@configurationErrorBody": {
+    "description": "Advice shown when the app was built with an invalid configuration."
+  },
+  "debugEngineOpen": "Engine debug",
+  "@debugEngineOpen": {
+    "description": "Button on the welcome page (debug builds only) that opens the engine debug screen."
+  },
+  "debugEngineTitle": "Engine debug",
+  "@debugEngineTitle": {
+    "description": "Title of the engine debug screen, shown only in dev and staging builds."
+  },
+  "debugModelSection": "Model",
+  "@debugModelSection": {
+    "description": "Section heading for choosing and loading a model."
+  },
+  "debugNoModels": "No models found in {directory}. Copy a GGUF file there with tool/push_debug_model.sh.",
+  "@debugNoModels": {
+    "description": "Shown when the models folder has no GGUF files.",
+    "placeholders": {
+      "directory": {
+        "type": "String",
+        "example": "/data/user/0/app.emberwit.dev/files/models"
+      }
+    }
+  },
+  "debugRefresh": "Refresh list",
+  "@debugRefresh": {
+    "description": "Button that rescans the models folder."
+  },
+  "debugLoad": "Load",
+  "@debugLoad": {
+    "description": "Button that loads the selected model."
+  },
+  "debugUnload": "Unload",
+  "@debugUnload": {
+    "description": "Button that frees the loaded model."
+  },
+  "debugLoading": "Loading model… {percent}%",
+  "@debugLoading": {
+    "description": "Progress text while a model loads.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "42"
+      }
+    }
+  },
+  "debugArchitecture": "Architecture: {value}",
+  "@debugArchitecture": {
+    "description": "Model architecture label.",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "example": "llama"
+      }
+    }
+  },
+  "debugParameters": "Parameters: {count}",
+  "@debugParameters": {
+    "description": "Number of model parameters.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact",
+        "example": "1500000000"
+      }
+    }
+  },
+  "debugContext": "Context: {tokens} tokens",
+  "@debugContext": {
+    "description": "Context window size of the loaded model.",
+    "placeholders": {
+      "tokens": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "2048"
+      }
+    }
+  },
+  "debugThreads": "Threads: {count}, GPU layers: {layers}",
+  "@debugThreads": {
+    "description": "CPU threads and GPU layers in use.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "4"
+      },
+      "layers": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "0"
+      }
+    }
+  },
+  "debugDevices": "Devices: {names}",
+  "@debugDevices": {
+    "description": "Compute devices available to the engine.",
+    "placeholders": {
+      "names": {
+        "type": "String",
+        "example": "CPU, MTL0"
+      }
+    }
+  },
+  "debugLoadTime": "Loaded in {ms} ms",
+  "@debugLoadTime": {
+    "description": "How long loading took.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "850"
+      }
+    }
+  },
+  "debugPromptSection": "Prompt",
+  "@debugPromptSection": {
+    "description": "Section heading for the prompt input."
+  },
+  "debugPromptHint": "Type a prompt",
+  "@debugPromptHint": {
+    "description": "Hint text of the prompt field."
+  },
+  "debugUseChatTemplate": "Use the model's chat template",
+  "@debugUseChatTemplate": {
+    "description": "Switch: wrap the prompt as a user message in the model's chat format."
+  },
+  "debugMaxTokens": "Max tokens: {count}",
+  "@debugMaxTokens": {
+    "description": "Slider label for the maximum output length.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "128"
+      }
+    }
+  },
+  "debugTemperature": "Temperature: {value}",
+  "@debugTemperature": {
+    "description": "Slider label for sampling temperature.",
+    "placeholders": {
+      "value": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "12.5"
+      }
+    }
+  },
+  "debugGenerate": "Generate",
+  "@debugGenerate": {
+    "description": "Button that starts generation."
+  },
+  "debugStop": "Stop",
+  "@debugStop": {
+    "description": "Button that stops generation."
+  },
+  "debugOutputSection": "Output",
+  "@debugOutputSection": {
+    "description": "Section heading for generated text."
+  },
+  "debugStatsTtft": "Time to first token: {ms} ms",
+  "@debugStatsTtft": {
+    "description": "Latency before the first generated token.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "420"
+      }
+    }
+  },
+  "debugStatsSpeed": "Speed: {tps} tokens/s",
+  "@debugStatsSpeed": {
+    "description": "Generation speed.",
+    "placeholders": {
+      "tps": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "12.5"
+      }
+    }
+  },
+  "debugStatsTokens": "Tokens: {prompt} prompt + {generated} generated",
+  "@debugStatsTokens": {
+    "description": "Token counts of the last generation.",
+    "placeholders": {
+      "prompt": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "12"
+      },
+      "generated": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "64"
+      }
+    }
+  },
+  "debugStopReason": "Stopped: {reason}",
+  "@debugStopReason": {
+    "description": "Why generation stopped.",
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "example": "end of text"
+      }
+    }
+  },
+  "stopReasonEndOfSequence": "end of text",
+  "@stopReasonEndOfSequence": {
+    "description": "Stop reason: the model finished."
+  },
+  "stopReasonMaxTokens": "length limit reached",
+  "@stopReasonMaxTokens": {
+    "description": "Stop reason: max tokens reached."
+  },
+  "stopReasonStopSequence": "stop sequence",
+  "@stopReasonStopSequence": {
+    "description": "Stop reason: a stop sequence appeared."
+  },
+  "stopReasonCancelled": "stopped by you",
+  "@stopReasonCancelled": {
+    "description": "Stop reason: the user stopped generation."
+  },
+  "stopReasonContextFull": "conversation too long",
+  "@stopReasonContextFull": {
+    "description": "Stop reason: the context window is full."
+  },
+  "failureUnexpected": "Something went wrong. Please try again.",
+  "@failureUnexpected": {
+    "description": "Generic error message."
+  },
+  "failureConfiguration": "This build is misconfigured. Please reinstall the app.",
+  "@failureConfiguration": {
+    "description": "Error for an invalid build configuration."
+  },
+  "failureModelFileNotFound": "The model file is missing. Download or import it again.",
+  "@failureModelFileNotFound": {
+    "description": "Model load error: file missing."
+  },
+  "failureModelInvalidFormat": "This file is not a model the app can read. Use a GGUF model file.",
+  "@failureModelInvalidFormat": {
+    "description": "Model load error: not a GGUF file."
+  },
+  "failureModelUnsupported": "This model could not be loaded. It may be damaged or use an unsupported design. Try another model.",
+  "@failureModelUnsupported": {
+    "description": "Model load error: rejected by the engine."
+  },
+  "failureModelInsufficientMemory": "Not enough memory for this model. Close other apps, use a shorter context, or pick a smaller model.",
+  "@failureModelInsufficientMemory": {
+    "description": "Model load error: out of memory."
+  },
+  "failureEngineUnavailable": "The AI engine is not available on this device.",
+  "@failureEngineUnavailable": {
+    "description": "Model load error: native engine missing, for example on a 32-bit phone."
+  },
+  "failureModelLoadCancelled": "Loading was cancelled.",
+  "@failureModelLoadCancelled": {
+    "description": "Model load error: cancelled by the user."
+  },
+  "failureNoModelLoaded": "No model is loaded. Load a model first.",
+  "@failureNoModelLoaded": {
+    "description": "Generation error: no model loaded."
+  },
+  "failureEngineBusy": "The AI is busy. Wait for it to finish or stop it.",
+  "@failureEngineBusy": {
+    "description": "Error: engine already working."
+  },
+  "failureContextOverflow": "The message is too long for this model ({tokens} of {limit} tokens). Shorten it or start a new chat.",
+  "@failureContextOverflow": {
+    "description": "Generation error: prompt larger than the context window.",
+    "placeholders": {
+      "tokens": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "3000"
+      },
+      "limit": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "2048"
+      }
+    }
+  },
+  "failureGeneration": "The AI stopped because of an error. Please try again.",
+  "@failureGeneration": {
+    "description": "Generation error: engine failure while generating."
+  },
+  "deviceCheckOpen": "Check this device",
+  "@deviceCheckOpen": {
+    "description": "Button that opens the device check screen."
+  },
+  "deviceCheckTitle": "Device check",
+  "@deviceCheckTitle": {
+    "description": "Title of the device check screen."
+  },
+  "deviceTierHeading": "Performance class",
+  "@deviceTierHeading": {
+    "description": "Label above the device performance class."
+  },
+  "deviceTierLow": "Entry level",
+  "@deviceTierLow": {
+    "description": "Name of the lowest device tier."
+  },
+  "deviceTierMid": "Mid range",
+  "@deviceTierMid": {
+    "description": "Name of the mid device tier."
+  },
+  "deviceTierHigh": "High end",
+  "@deviceTierHigh": {
+    "description": "Name of the high device tier."
+  },
+  "deviceTierFlagship": "Flagship",
+  "@deviceTierFlagship": {
+    "description": "Name of the top device tier."
+  },
+  "deviceTierLowDescription": "Best with small models under 1 billion parameters.",
+  "@deviceTierLowDescription": {
+    "description": "Explains what the lowest tier can run."
+  },
+  "deviceTierMidDescription": "Runs small and medium models, up to about 2 billion parameters.",
+  "@deviceTierMidDescription": {
+    "description": "Explains what the mid tier can run."
+  },
+  "deviceTierHighDescription": "Runs models up to about 4 billion parameters.",
+  "@deviceTierHighDescription": {
+    "description": "Explains what the high tier can run."
+  },
+  "deviceTierFlagshipDescription": "Runs every model in the catalog comfortably.",
+  "@deviceTierFlagshipDescription": {
+    "description": "Explains what the top tier can run."
+  },
+  "deviceContextLength": "Conversation memory: {tokens} tokens",
+  "@deviceContextLength": {
+    "description": "Default context length for this device.",
+    "placeholders": {
+      "tokens": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "2048"
+      }
+    }
+  },
+  "deviceDetailsSection": "Details",
+  "@deviceDetailsSection": {
+    "description": "Heading of the device facts list."
+  },
+  "deviceMemory": "Memory: {available} GB free of {total} GB",
+  "@deviceMemory": {
+    "description": "RAM line. Values are gigabytes.",
+    "placeholders": {
+      "available": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "2.1"
+      },
+      "total": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "8.0"
+      }
+    }
+  },
+  "deviceStorage": "Storage: {free} GB free of {total} GB",
+  "@deviceStorage": {
+    "description": "Storage line. Values are gigabytes.",
+    "placeholders": {
+      "free": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "21.5"
+      },
+      "total": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "128.0"
+      }
+    }
+  },
+  "deviceProcessor": "Processor: {architecture}, {cores} cores ({fast} fast)",
+  "@deviceProcessor": {
+    "description": "CPU line.",
+    "placeholders": {
+      "architecture": {
+        "type": "String",
+        "example": "arm64-v8a"
+      },
+      "cores": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "8"
+      },
+      "fast": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "4"
+      }
+    }
+  },
+  "deviceCpuFeatures": "AI instructions: {features}",
+  "@deviceCpuFeatures": {
+    "description": "CPU features that speed up AI, comma separated.",
+    "placeholders": {
+      "features": {
+        "type": "String",
+        "example": "dotprod, i8mm"
+      }
+    }
+  },
+  "deviceCpuFeaturesNone": "AI instructions: none detected",
+  "@deviceCpuFeaturesNone": {
+    "description": "Shown when no AI-relevant CPU features exist."
+  },
+  "deviceGpu": "Graphics acceleration: {backends}",
+  "@deviceGpu": {
+    "description": "GPU compute APIs available.",
+    "placeholders": {
+      "backends": {
+        "type": "String",
+        "example": "Metal"
+      }
+    }
+  },
+  "deviceGpuNone": "Graphics acceleration: not available",
+  "@deviceGpuNone": {
+    "description": "Shown when no GPU compute API is available."
+  },
+  "deviceSystem": "System: {model}, {os}",
+  "@deviceSystem": {
+    "description": "Device model and OS version.",
+    "placeholders": {
+      "model": {
+        "type": "String",
+        "example": "Pixel 8"
+      },
+      "os": {
+        "type": "String",
+        "example": "Android 14"
+      }
+    }
+  },
+  "deviceThermal": "Temperature: {state}",
+  "@deviceThermal": {
+    "description": "Thermal state line.",
+    "placeholders": {
+      "state": {
+        "type": "String",
+        "example": "normal"
+      }
+    }
+  },
+  "thermalNominal": "normal",
+  "@thermalNominal": {
+    "description": "Thermal state: normal."
+  },
+  "thermalFair": "warm",
+  "@thermalFair": {
+    "description": "Thermal state: slightly elevated."
+  },
+  "thermalSerious": "hot, slowing down",
+  "@thermalSerious": {
+    "description": "Thermal state: throttling."
+  },
+  "thermalCritical": "very hot",
+  "@thermalCritical": {
+    "description": "Thermal state: critical."
+  },
+  "thermalUnknown": "not reported",
+  "@thermalUnknown": {
+    "description": "Thermal state unavailable."
+  },
+  "deviceBattery": "Battery: {level}%",
+  "@deviceBattery": {
+    "description": "Battery level.",
+    "placeholders": {
+      "level": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "80"
+      }
+    }
+  },
+  "deviceBatteryCharging": "Battery: {level}%, charging",
+  "@deviceBatteryCharging": {
+    "description": "Battery level while charging.",
+    "placeholders": {
+      "level": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "80"
+      }
+    }
+  },
+  "deviceBatteryUnknown": "Battery: not reported",
+  "@deviceBatteryUnknown": {
+    "description": "Battery unavailable."
+  },
+  "deviceLowPower": "Battery saver is on, so AI may run slower.",
+  "@deviceLowPower": {
+    "description": "Warning when battery saver is on."
+  },
+  "deviceEmulator": "This is an emulator. Results do not reflect a real phone.",
+  "@deviceEmulator": {
+    "description": "Notice on emulators."
+  },
+  "deviceRefresh": "Refresh",
+  "@deviceRefresh": {
+    "description": "Button that re-reads device details."
+  },
+  "benchmarkSection": "Speed test",
+  "@benchmarkSection": {
+    "description": "Heading of the benchmark card."
+  },
+  "benchmarkDescription": "A 10 second test with a small built-in model measures how fast this phone runs AI. Nothing is sent anywhere.",
+  "@benchmarkDescription": {
+    "description": "Explains the benchmark."
+  },
+  "benchmarkNotRun": "Not run yet. Model suggestions use an estimate for now.",
+  "@benchmarkNotRun": {
+    "description": "Shown when no benchmark result exists."
+  },
+  "benchmarkRun": "Run speed test",
+  "@benchmarkRun": {
+    "description": "Button that starts the benchmark."
+  },
+  "benchmarkRerun": "Run again",
+  "@benchmarkRerun": {
+    "description": "Button that reruns the benchmark."
+  },
+  "benchmarkStagePreparing": "Preparing the test…",
+  "@benchmarkStagePreparing": {
+    "description": "Benchmark stage."
+  },
+  "benchmarkStageLoading": "Loading the test model…",
+  "@benchmarkStageLoading": {
+    "description": "Benchmark stage."
+  },
+  "benchmarkStageRunning": "Measuring speed…",
+  "@benchmarkStageRunning": {
+    "description": "Benchmark stage."
+  },
+  "benchmarkSpeed": "Speed: {tps} tokens per second",
+  "@benchmarkSpeed": {
+    "description": "Measured generation speed.",
+    "placeholders": {
+      "tps": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "24.5"
+      }
+    }
+  },
+  "benchmarkFirstToken": "First reply after {ms} ms",
+  "@benchmarkFirstToken": {
+    "description": "Measured time to first token.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "320"
+      }
+    }
+  },
+  "benchmarkLoadTime": "Test model loaded in {ms} ms",
+  "@benchmarkLoadTime": {
+    "description": "Measured load time.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "640"
+      }
+    }
+  },
+  "benchmarkMeasuredOn": "Measured on {date}",
+  "@benchmarkMeasuredOn": {
+    "description": "When the benchmark ran.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd",
+        "example": "2026-09-24"
+      }
+    }
+  },
+  "failureDeviceProfiling": "Could not read this phone's details. Please try again.",
+  "@failureDeviceProfiling": {
+    "description": "Error: device profiling failed."
+  },
+  "failureBenchmarkUnavailable": "The speed test is not included in this version of the app. Suggestions use an estimate instead.",
+  "@failureBenchmarkUnavailable": {
+    "description": "Error: benchmark model not bundled."
+  },
+  "recommendationRecommended": "Recommended",
+  "@recommendationRecommended": {
+    "description": "Label: model recommended for this device."
+  },
+  "recommendationRunsSlowly": "Runs slowly",
+  "@recommendationRunsSlowly": {
+    "description": "Label: model works but slowly."
+  },
+  "recommendationNotSupported": "Not supported",
+  "@recommendationNotSupported": {
+    "description": "Label: model cannot run on this device."
+  },
+  "reasonRunsWell": "Runs smoothly, about {tps} tokens per second.",
+  "@reasonRunsWell": {
+    "description": "Recommendation reason: good speed.",
+    "placeholders": {
+      "tps": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "12.5"
+      }
+    }
+  },
+  "reasonSlowSpeed": "Replies will be slow, about {tps} tokens per second.",
+  "@reasonSlowSpeed": {
+    "description": "Recommendation reason: slow but usable.",
+    "placeholders": {
+      "tps": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "4.2"
+      }
+    }
+  },
+  "reasonTooSlow": "Too slow on this phone, about {tps} tokens per second.",
+  "@reasonTooSlow": {
+    "description": "Recommendation reason: unusably slow.",
+    "placeholders": {
+      "tps": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "0.9"
+      }
+    }
+  },
+  "reasonNotEnoughMemory": "Needs {required} GB of memory, but this phone can spare {budget} GB.",
+  "@reasonNotEnoughMemory": {
+    "description": "Recommendation reason: not enough RAM.",
+    "placeholders": {
+      "required": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "2.9"
+      },
+      "budget": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "1.8"
+      }
+    }
+  },
+  "reasonBelowMinimumRam": "Needs a phone with at least {minimum} GB of RAM. This one has {total} GB.",
+  "@reasonBelowMinimumRam": {
+    "description": "Recommendation reason: below catalog minimum RAM.",
+    "placeholders": {
+      "minimum": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "6.0"
+      },
+      "total": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "4.0"
+      }
+    }
+  },
+  "reasonNotEnoughStorage": "Needs {required} GB of free storage, but only {free} GB is free. Free up space to download it.",
+  "@reasonNotEnoughStorage": {
+    "description": "Recommendation reason: not enough storage.",
+    "placeholders": {
+      "required": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "3.6"
+      },
+      "free": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "1.2"
+      }
+    }
+  },
+  "reasonContextReduced": "Uses a shorter conversation memory on this phone: {to} tokens instead of {from}.",
+  "@reasonContextReduced": {
+    "description": "Recommendation note: context shortened to fit.",
+    "placeholders": {
+      "from": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "4096"
+      },
+      "to": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "2048"
+      }
+    }
+  },
+  "reasonSpeedEstimated": "Speed is an estimate. Run the speed test for an exact number.",
+  "@reasonSpeedEstimated": {
+    "description": "Recommendation note: no benchmark yet."
+  },
+  "modelsOpen": "Choose a model",
+  "@modelsOpen": {
+    "description": "Primary button on the home screen that opens the models screen."
+  },
+  "modelsTitle": "Models",
+  "@modelsTitle": {
+    "description": "Title of the models screen."
+  },
+  "modelsImport": "Import from this phone",
+  "@modelsImport": {
+    "description": "Action that imports a GGUF file from device storage."
+  },
+  "modelsRefreshCatalog": "Check for new models",
+  "@modelsRefreshCatalog": {
+    "description": "Action that downloads the latest model list."
+  },
+  "modelsStorageSummary": "{count, plural, =0{No models on this phone yet} =1{1 model uses {used} GB} other{{count} models use {used} GB}} · {free} GB free",
+  "@modelsStorageSummary": {
+    "description": "Storage summary on the models screen.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      },
+      "used": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "2.3"
+      },
+      "free": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "18.4"
+      }
+    }
+  },
+  "modelsWifiOnly": "Download on Wi-Fi only",
+  "@modelsWifiOnly": {
+    "description": "Switch: downloads wait for Wi-Fi."
+  },
+  "modelsWifiOnlyHint": "Models are large. This avoids using mobile data.",
+  "@modelsWifiOnlyHint": {
+    "description": "Explains the Wi-Fi only switch."
+  },
+  "modelsCatalogBundled": "Showing the built-in model list. Connect to the internet to check for new models.",
+  "@modelsCatalogBundled": {
+    "description": "Notice when the catalog came from the app bundle."
+  },
+  "modelsCatalogCached": "Showing the saved model list. Connect to the internet to check for new models.",
+  "@modelsCatalogCached": {
+    "description": "Notice when the catalog came from the on-device cache."
+  },
+  "modelsSectionInstalled": "On this phone",
+  "@modelsSectionInstalled": {
+    "description": "Section heading for installed models."
+  },
+  "modelsSectionDownloads": "Downloading",
+  "@modelsSectionDownloads": {
+    "description": "Section heading for downloads."
+  },
+  "modelsSectionAvailable": "Available to download",
+  "@modelsSectionAvailable": {
+    "description": "Section heading for catalog models."
+  },
+  "modelsSize": "{size} GB",
+  "@modelsSize": {
+    "description": "Model file size in gigabytes.",
+    "placeholders": {
+      "size": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "1.3"
+      }
+    }
+  },
+  "modelsParameters": "{count} parameters",
+  "@modelsParameters": {
+    "description": "Model parameter count, compact.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact",
+        "example": "1700000000"
+      }
+    }
+  },
+  "modelsBengaliQuality": "Bengali: {quality}",
+  "@modelsBengaliQuality": {
+    "description": "Bengali quality of a model.",
+    "placeholders": {
+      "quality": {
+        "type": "String",
+        "example": "good"
+      }
+    }
+  },
+  "languageQualityGood": "good",
+  "@languageQualityGood": {
+    "description": "Language quality level."
+  },
+  "languageQualityBasic": "basic",
+  "@languageQualityBasic": {
+    "description": "Language quality level."
+  },
+  "languageQualityLimited": "limited",
+  "@languageQualityLimited": {
+    "description": "Language quality level."
+  },
+  "languageQualityUnknown": "not rated",
+  "@languageQualityUnknown": {
+    "description": "Language quality level unknown."
+  },
+  "modelsLicense": "License: {name}",
+  "@modelsLicense": {
+    "description": "License line of a model.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Apache License 2.0"
+      }
+    }
+  },
+  "modelsDownload": "Download",
+  "@modelsDownload": {
+    "description": "Button that starts a model download."
+  },
+  "modelsVerified": "Verified",
+  "@modelsVerified": {
+    "description": "Badge: file matches the signed catalog."
+  },
+  "modelsUnverified": "Unverified import",
+  "@modelsUnverified": {
+    "description": "Badge: imported file with no trusted hash."
+  },
+  "modelsDelete": "Delete",
+  "@modelsDelete": {
+    "description": "Button that deletes an installed model."
+  },
+  "modelsDeleteTitle": "Delete {name}?",
+  "@modelsDeleteTitle": {
+    "description": "Title of the delete confirmation.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Qwen3 0.6B"
+      }
+    }
+  },
+  "modelsDeleteBody": "This frees {size} GB. You can download it again later.",
+  "@modelsDeleteBody": {
+    "description": "Body of the delete confirmation.",
+    "placeholders": {
+      "size": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "1.3"
+      }
+    }
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Generic cancel button."
+  },
+  "downloadQueued": "Waiting to start…",
+  "@downloadQueued": {
+    "description": "Download phase."
+  },
+  "downloadWaitingForWifi": "Waiting for Wi-Fi…",
+  "@downloadWaitingForWifi": {
+    "description": "Download phase when Wi-Fi only is on."
+  },
+  "downloadPaused": "Paused",
+  "@downloadPaused": {
+    "description": "Download phase."
+  },
+  "downloadVerifying": "Checking the file…",
+  "@downloadVerifying": {
+    "description": "Download phase: SHA-256 check."
+  },
+  "downloadProgress": "{percent}%",
+  "@downloadProgress": {
+    "description": "Download percentage.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "45"
+      }
+    }
+  },
+  "downloadSpeed": "{speed} MB/s",
+  "@downloadSpeed": {
+    "description": "Download speed.",
+    "placeholders": {
+      "speed": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "3.2"
+      }
+    }
+  },
+  "downloadRemainingMinutes": "{minutes, plural, =1{1 min left} other{{minutes} min left}}",
+  "@downloadRemainingMinutes": {
+    "description": "Estimated time left in minutes.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "downloadRemainingHours": "{hours} h {minutes} min left",
+  "@downloadRemainingHours": {
+    "description": "Estimated time left in hours and minutes.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
+  "downloadRemainingSoon": "Less than a minute left",
+  "@downloadRemainingSoon": {
+    "description": "Estimated time left under a minute."
+  },
+  "downloadPause": "Pause",
+  "@downloadPause": {
+    "description": "Button that pauses a download."
+  },
+  "downloadResume": "Resume",
+  "@downloadResume": {
+    "description": "Button that resumes a download."
+  },
+  "downloadCancel": "Cancel download",
+  "@downloadCancel": {
+    "description": "Button that cancels a download."
+  },
+  "downloadRetry": "Try again",
+  "@downloadRetry": {
+    "description": "Button that retries a failed download."
+  },
+  "downloadDismiss": "Dismiss",
+  "@downloadDismiss": {
+    "description": "Button that hides a failed download."
+  },
+  "downloadNotificationRunning": "Downloading {progress}",
+  "@downloadNotificationRunning": {
+    "description": "Download notification while running. {progress} is filled in by the system; keep it as is.",
+    "placeholders": {
+      "progress": {
+        "type": "String",
+        "example": "45%"
+      }
+    }
+  },
+  "downloadNotificationComplete": "Downloaded. Checking the file…",
+  "@downloadNotificationComplete": {
+    "description": "Download notification when the transfer finished."
+  },
+  "downloadNotificationError": "Download failed",
+  "@downloadNotificationError": {
+    "description": "Download notification after an error."
+  },
+  "downloadNotificationPaused": "Download paused",
+  "@downloadNotificationPaused": {
+    "description": "Download notification while paused."
+  },
+  "licenseDialogTitle": "{name} license",
+  "@licenseDialogTitle": {
+    "description": "Title of the license agreement dialog.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Gemma 3 1B"
+      }
+    }
+  },
+  "licenseDialogBody": "This model is covered by the {license}, which has usage rules. Read it at {url} before downloading.",
+  "@licenseDialogBody": {
+    "description": "Explains that a model license has usage rules.",
+    "placeholders": {
+      "license": {
+        "type": "String",
+        "example": "Gemma Terms of Use"
+      },
+      "url": {
+        "type": "String",
+        "example": "https://ai.google.dev/gemma/terms"
+      }
+    }
+  },
+  "licenseDialogAccept": "Agree and download",
+  "@licenseDialogAccept": {
+    "description": "Button that accepts a model license and starts the download."
+  },
+  "importedModel": "Imported: {size} GB",
+  "@importedModel": {
+    "description": "Subtitle of an imported model.",
+    "placeholders": {
+      "size": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "1.3"
+      }
+    }
+  },
+  "failureCatalogNetwork": "Could not reach the model list server. Showing the list saved on this phone.",
+  "@failureCatalogNetwork": {
+    "description": "Catalog error: network."
+  },
+  "failureCatalogInvalidSignature": "The downloaded model list failed its security check and was ignored.",
+  "@failureCatalogInvalidSignature": {
+    "description": "Catalog error: bad signature."
+  },
+  "failureCatalogUnsupported": "The model list needs a newer version of the app. Please update.",
+  "@failureCatalogUnsupported": {
+    "description": "Catalog error: newer schema."
+  },
+  "failureCatalogMalformed": "The downloaded model list is damaged and was ignored.",
+  "@failureCatalogMalformed": {
+    "description": "Catalog error: malformed."
+  },
+  "failureCatalogRollback": "The server sent an older model list, so the current one was kept.",
+  "@failureCatalogRollback": {
+    "description": "Catalog error: rollback attempt."
+  },
+  "failureDownloadStorage": "Not enough free storage. Free up space and try again.",
+  "@failureDownloadStorage": {
+    "description": "Download error: storage."
+  },
+  "failureDownloadNetwork": "The download could not finish. Check the connection and try again.",
+  "@failureDownloadNetwork": {
+    "description": "Download error: network."
+  },
+  "failureDownloadHashMismatch": "The downloaded file was damaged or altered, so it was deleted. Please try again.",
+  "@failureDownloadHashMismatch": {
+    "description": "Download error: SHA-256 mismatch."
+  },
+  "failureDownloadAlready": "This model is already downloading.",
+  "@failureDownloadAlready": {
+    "description": "Download error: duplicate."
+  },
+  "failureImportNotGguf": "This file is not a GGUF model.",
+  "@failureImportNotGguf": {
+    "description": "Import error: not GGUF."
+  },
+  "failureImportVersion": "This GGUF file uses a version the app cannot read.",
+  "@failureImportVersion": {
+    "description": "Import error: GGUF version."
+  },
+  "failureImportTooSmall": "This file is too small to be a language model.",
+  "@failureImportTooSmall": {
+    "description": "Import error: too small."
+  },
+  "failureImportStorage": "Not enough free storage to import this file.",
+  "@failureImportStorage": {
+    "description": "Import error: storage."
+  },
+  "failureImportCopy": "The file could not be copied. Please try again.",
+  "@failureImportCopy": {
+    "description": "Import error: copy failed."
+  },
+  "failureModelNotFound": "This model is no longer on the phone.",
+  "@failureModelNotFound": {
+    "description": "Error: model missing."
+  },
+  "chatsOpen": "Start chatting",
+  "@chatsOpen": {
+    "description": "Home screen button that opens the chat list."
+  },
+  "chatsTitle": "Chats",
+  "@chatsTitle": {
+    "description": "Title of the chat list screen."
+  },
+  "chatsNew": "New chat",
+  "@chatsNew": {
+    "description": "Button that starts a new conversation."
+  },
+  "chatUntitled": "New chat",
+  "@chatUntitled": {
+    "description": "Title of a conversation before its first message."
+  },
+  "chatsSearchHint": "Search chats",
+  "@chatsSearchHint": {
+    "description": "Hint of the chat search field."
+  },
+  "chatsEmpty": "No chats yet. Start one and ask anything, even offline.",
+  "@chatsEmpty": {
+    "description": "Empty state of the chat list."
+  },
+  "chatsNoResults": "No chats match “{query}”.",
+  "@chatsNoResults": {
+    "description": "Shown when a search finds nothing.",
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "flood"
+      }
+    }
+  },
+  "chatsPinned": "Pinned",
+  "@chatsPinned": {
+    "description": "Label of a pinned conversation."
+  },
+  "chatsPin": "Pin",
+  "@chatsPin": {
+    "description": "Menu item that pins a conversation."
+  },
+  "chatsUnpin": "Unpin",
+  "@chatsUnpin": {
+    "description": "Menu item that unpins a conversation."
+  },
+  "chatsRename": "Rename",
+  "@chatsRename": {
+    "description": "Menu item that renames a conversation."
+  },
+  "chatsDelete": "Delete",
+  "@chatsDelete": {
+    "description": "Menu item that deletes a conversation."
+  },
+  "chatsRenameTitle": "Rename chat",
+  "@chatsRenameTitle": {
+    "description": "Title of the rename dialog."
+  },
+  "chatsDeleteTitle": "Delete this chat?",
+  "@chatsDeleteTitle": {
+    "description": "Title of the delete confirmation."
+  },
+  "chatsDeleteBody": "All its messages will be deleted from this phone.",
+  "@chatsDeleteBody": {
+    "description": "Body of the delete confirmation."
+  },
+  "chatsMore": "More options",
+  "@chatsMore": {
+    "description": "Tooltip of the conversation menu button."
+  },
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "Generic save button."
+  },
+  "chatInputHint": "Message",
+  "@chatInputHint": {
+    "description": "Hint of the message field."
+  },
+  "chatSend": "Send",
+  "@chatSend": {
+    "description": "Button that sends a message."
+  },
+  "chatStop": "Stop",
+  "@chatStop": {
+    "description": "Button that stops the reply."
+  },
+  "chatLoadingModel": "Loading the model… {percent}%",
+  "@chatLoadingModel": {
+    "description": "Shown while the chat model loads.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "40"
+      }
+    }
+  },
+  "chatReading": "Reading your message…",
+  "@chatReading": {
+    "description": "Shown before the first word of a reply."
+  },
+  "chatNoModelTitle": "No model yet",
+  "@chatNoModelTitle": {
+    "description": "Title when no model is installed."
+  },
+  "chatNoModelBody": "Download a model to start chatting. It runs on this phone, without internet.",
+  "@chatNoModelBody": {
+    "description": "Body when no model is installed."
+  },
+  "chatContextTrimmed": "{count, plural, =1{1 earlier message was left out} other{{count} earlier messages were left out}} to fit this model's memory.",
+  "@chatContextTrimmed": {
+    "description": "Notice when old messages did not fit in the context.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "chatStopped": "Stopped",
+  "@chatStopped": {
+    "description": "Label of a reply stopped by the user."
+  },
+  "chatReplyFailed": "This reply could not be finished.",
+  "@chatReplyFailed": {
+    "description": "Label of a failed reply."
+  },
+  "chatStats": "{tps} tokens/s · first word {ms} ms · {tokens} tokens used",
+  "@chatStats": {
+    "description": "Reply statistics.",
+    "placeholders": {
+      "tps": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "12.4"
+      },
+      "ms": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "640"
+      },
+      "tokens": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "812"
+      }
+    }
+  },
+  "chatCopy": "Copy",
+  "@chatCopy": {
+    "description": "Button that copies a message."
+  },
+  "chatCopied": "Copied",
+  "@chatCopied": {
+    "description": "Confirmation after copying."
+  },
+  "chatCopyCode": "Copy code",
+  "@chatCopyCode": {
+    "description": "Button that copies a code block."
+  },
+  "chatLinkTitle": "Open this link?",
+  "@chatLinkTitle": {
+    "description": "Title of the link confirmation."
+  },
+  "chatLinkBody": "{url}\n\nLinks are written by the AI and may be wrong or unsafe. Opening it uses the internet.",
+  "@chatLinkBody": {
+    "description": "Body of the link confirmation.",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "https://example.org"
+      }
+    }
+  },
+  "chatLinkOpen": "Open",
+  "@chatLinkOpen": {
+    "description": "Button that opens a link."
+  },
+  "chatImageBlocked": "[Image not loaded: {alt}]",
+  "@chatImageBlocked": {
+    "description": "Placeholder for images in AI replies, which are never loaded.",
+    "placeholders": {
+      "alt": {
+        "type": "String",
+        "example": "diagram"
+      }
+    }
+  },
+  "chatYou": "You",
+  "@chatYou": {
+    "description": "Screen reader label for the user's messages."
+  },
+  "chatSettingsOpen": "Chat settings",
+  "@chatSettingsOpen": {
+    "description": "Tooltip of the chat settings button."
+  },
+  "chatSettingsTitle": "Chat settings",
+  "@chatSettingsTitle": {
+    "description": "Title of the chat settings sheet."
+  },
+  "chatSettingsModel": "Model",
+  "@chatSettingsModel": {
+    "description": "Label of the model picker."
+  },
+  "chatSettingsSystemPrompt": "Instructions for the AI",
+  "@chatSettingsSystemPrompt": {
+    "description": "Label of the system prompt field."
+  },
+  "chatSettingsTemperature": "Creativity: {value}",
+  "@chatSettingsTemperature": {
+    "description": "Temperature slider label.",
+    "placeholders": {
+      "value": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "0.7"
+      }
+    }
+  },
+  "chatSettingsTopP": "Word variety: {value}",
+  "@chatSettingsTopP": {
+    "description": "Top p slider label.",
+    "placeholders": {
+      "value": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 2
+        },
+        "example": "0.95"
+      }
+    }
+  },
+  "chatSettingsContext": "Conversation memory: {tokens} tokens",
+  "@chatSettingsContext": {
+    "description": "Context length choice label.",
+    "placeholders": {
+      "tokens": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "2048"
+      }
+    }
+  },
+  "chatSettingsMaxTokens": "Longest reply: {tokens} tokens",
+  "@chatSettingsMaxTokens": {
+    "description": "Max tokens slider label.",
+    "placeholders": {
+      "tokens": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "512"
+      }
+    }
+  },
+  "chatSettingsReset": "Reset to defaults",
+  "@chatSettingsReset": {
+    "description": "Button that resets chat settings."
+  },
+  "failureRuntimeOverheated": "Your phone is too hot to run the AI right now. Let it cool down for a few minutes, then try again.",
+  "@failureRuntimeOverheated": {
+    "description": "Error: generation refused because the device is critically hot."
+  },
+  "failureRuntimeBattery": "The battery is almost empty. Plug in your phone to keep chatting.",
+  "@failureRuntimeBattery": {
+    "description": "Error: generation refused because the battery is nearly empty."
+  },
+  "failureArchiveWeakPassphrase": "Use a passphrase of at least 8 characters.",
+  "@failureArchiveWeakPassphrase": {
+    "description": "Error: export passphrase too short."
+  },
+  "failureArchiveWrongPassphrase": "Wrong passphrase, or the file was changed.",
+  "@failureArchiveWrongPassphrase": {
+    "description": "Error: export could not be decrypted."
+  },
+  "failureArchiveNotArchive": "This file is not an Emberwit chat export.",
+  "@failureArchiveNotArchive": {
+    "description": "Error: picked file is not an export."
+  },
+  "failureArchiveVersion": "This export was made by a newer version of the app. Update the app and try again.",
+  "@failureArchiveVersion": {
+    "description": "Error: export file version is newer than the app."
+  },
+  "failureArchiveFile": "The file could not be read or saved.",
+  "@failureArchiveFile": {
+    "description": "Error: reading or writing the export file failed."
+  },
+  "runtimeOverheated": "Your phone is very hot. The AI is paused until it cools down.",
+  "@runtimeOverheated": {
+    "description": "Banner: critical heat, generation paused."
+  },
+  "runtimeCriticalBattery": "Battery almost empty. The AI is paused until you plug in.",
+  "@runtimeCriticalBattery": {
+    "description": "Banner: battery critical, generation paused."
+  },
+  "runtimeWarm": "Your phone is warm, so replies are slower to save heat.",
+  "@runtimeWarm": {
+    "description": "Banner: serious heat, fewer threads."
+  },
+  "runtimeLowBattery": "Battery is low, so replies are slower to save power.",
+  "@runtimeLowBattery": {
+    "description": "Banner: low battery, fewer threads."
+  },
+  "runtimeBatterySaver": "Battery saver is on, so replies are slower.",
+  "@runtimeBatterySaver": {
+    "description": "Banner: battery saver mode, fewer threads."
+  },
+  "lockTitle": "{appName} is locked",
+  "@lockTitle": {
+    "description": "Lock screen heading.",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Emberwit"
+      }
+    }
+  },
+  "lockBody": "Unlock with your fingerprint, face or screen lock.",
+  "@lockBody": {
+    "description": "Lock screen explanation."
+  },
+  "lockUnlock": "Unlock",
+  "@lockUnlock": {
+    "description": "Lock screen button."
+  },
+  "lockReason": "Unlock {appName}",
+  "@lockReason": {
+    "description": "Reason shown in the system authentication prompt.",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Emberwit"
+      }
+    }
+  },
+  "lockFailed": "Not recognised. Try again.",
+  "@lockFailed": {
+    "description": "Authentication failed or was cancelled."
+  },
+  "lockLockedOut": "Too many attempts. Wait a moment, or unlock your phone first.",
+  "@lockLockedOut": {
+    "description": "Authentication temporarily locked by the OS."
+  },
+  "lockUnavailable": "Set up a screen lock or fingerprint in your phone's settings to use the app lock.",
+  "@lockUnavailable": {
+    "description": "Device has no biometrics or screen lock."
+  },
+  "passphraseLabel": "Passphrase",
+  "@passphraseLabel": {
+    "description": "Passphrase field label."
+  },
+  "passphraseConfirmLabel": "Repeat passphrase",
+  "@passphraseConfirmLabel": {
+    "description": "Confirm passphrase field label."
+  },
+  "passphraseShow": "Show passphrase",
+  "@passphraseShow": {
+    "description": "Tooltip: reveal passphrase."
+  },
+  "passphraseHide": "Hide passphrase",
+  "@passphraseHide": {
+    "description": "Tooltip: hide passphrase."
+  },
+  "passphraseRequired": "Enter the passphrase.",
+  "@passphraseRequired": {
+    "description": "Validation: empty passphrase."
+  },
+  "passphraseTooShort": "Use at least {count} characters.",
+  "@passphraseTooShort": {
+    "description": "Validation: passphrase too short.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "passphraseMismatch": "The passphrases do not match.",
+  "@passphraseMismatch": {
+    "description": "Validation: confirmation differs."
+  },
+  "passphraseContinue": "Continue",
+  "@passphraseContinue": {
+    "description": "Passphrase dialog confirm button."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen title and button tooltip."
+  },
+  "settingsAppearance": "Appearance",
+  "@settingsAppearance": {
+    "description": "Settings section."
+  },
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "Settings item."
+  },
+  "settingsThemeLight": "Light",
+  "@settingsThemeLight": {
+    "description": "Theme option."
+  },
+  "settingsThemeDark": "Dark",
+  "@settingsThemeDark": {
+    "description": "Theme option."
+  },
+  "settingsFollowSystem": "Same as phone",
+  "@settingsFollowSystem": {
+    "description": "Option to follow the system theme or language."
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Settings item."
+  },
+  "settingsChats": "Chats",
+  "@settingsChats": {
+    "description": "Settings section."
+  },
+  "settingsDefaultModel": "Model for new chats",
+  "@settingsDefaultModel": {
+    "description": "Settings item."
+  },
+  "settingsDefaultModelNewest": "Newest downloaded model",
+  "@settingsDefaultModelNewest": {
+    "description": "Default model option."
+  },
+  "settingsExport": "Export chats",
+  "@settingsExport": {
+    "description": "Settings item."
+  },
+  "settingsExportHint": "Save an encrypted copy of all chats.",
+  "@settingsExportHint": {
+    "description": "Settings item hint."
+  },
+  "settingsExportBody": "Choose a passphrase. You need it to import the chats later. It cannot be recovered if you forget it.",
+  "@settingsExportBody": {
+    "description": "Export passphrase dialog explanation."
+  },
+  "settingsExportDone": "Chats exported.",
+  "@settingsExportDone": {
+    "description": "Export finished."
+  },
+  "settingsImport": "Import chats",
+  "@settingsImport": {
+    "description": "Settings item."
+  },
+  "settingsImportHint": "Add chats from an export file.",
+  "@settingsImportHint": {
+    "description": "Settings item hint."
+  },
+  "settingsImportBody": "Enter the passphrase used when the chats were exported.",
+  "@settingsImportBody": {
+    "description": "Import passphrase dialog explanation."
+  },
+  "settingsImportDone": "{count, plural, =0{No new chats. They are all on this phone already.} =1{1 chat added.} other{{count} chats added.}}",
+  "@settingsImportDone": {
+    "description": "Import finished.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "settingsClearChats": "Delete all chats",
+  "@settingsClearChats": {
+    "description": "Settings item."
+  },
+  "settingsClearChatsTitle": "Delete all chats?",
+  "@settingsClearChatsTitle": {
+    "description": "Confirmation title."
+  },
+  "settingsClearChatsBody": "Every conversation on this phone is deleted. This cannot be undone.",
+  "@settingsClearChatsBody": {
+    "description": "Confirmation body."
+  },
+  "settingsClearChatsAction": "Delete all",
+  "@settingsClearChatsAction": {
+    "description": "Confirmation button."
+  },
+  "settingsClearChatsDone": "All chats deleted.",
+  "@settingsClearChatsDone": {
+    "description": "Chats deleted."
+  },
+  "settingsModels": "Models and downloads",
+  "@settingsModels": {
+    "description": "Settings section."
+  },
+  "settingsModelsUsage": "{count, plural, =0{No models on this phone} =1{1 model, {size} GB} other{{count} models, {size} GB}}",
+  "@settingsModelsUsage": {
+    "description": "Storage used by models.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      },
+      "size": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "2.4"
+      }
+    }
+  },
+  "settingsDeleteModels": "Delete all models",
+  "@settingsDeleteModels": {
+    "description": "Settings item."
+  },
+  "settingsDeleteModelsTitle": "Delete all models?",
+  "@settingsDeleteModelsTitle": {
+    "description": "Confirmation title."
+  },
+  "settingsDeleteModelsBody": "This frees {size} GB. Your chats are kept. You can download models again later.",
+  "@settingsDeleteModelsBody": {
+    "description": "Confirmation body.",
+    "placeholders": {
+      "size": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "2.4"
+      }
+    }
+  },
+  "settingsDeleteModelsDone": "{count, plural, =1{1 model deleted.} other{{count} models deleted.}}",
+  "@settingsDeleteModelsDone": {
+    "description": "Models deleted.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "settingsPrivacy": "Privacy and security",
+  "@settingsPrivacy": {
+    "description": "Settings section."
+  },
+  "settingsAppLock": "App lock",
+  "@settingsAppLock": {
+    "description": "Settings switch."
+  },
+  "settingsAppLockHint": "Ask for your fingerprint, face or screen lock when opening the app.",
+  "@settingsAppLockHint": {
+    "description": "Settings switch hint."
+  },
+  "settingsPrivacySummaryTitle": "What stays on this phone",
+  "@settingsPrivacySummaryTitle": {
+    "description": "Privacy summary heading."
+  },
+  "settingsPrivacySummary": "Chats are encrypted on this phone and never uploaded. The app has no accounts, ads, analytics or tracking. The internet is used only to download the model list and models.",
+  "@settingsPrivacySummary": {
+    "description": "Privacy summary."
+  },
+  "settingsDevice": "Device",
+  "@settingsDevice": {
+    "description": "Settings section."
+  },
+  "settingsRerunBenchmark": "Device check and speed test",
+  "@settingsRerunBenchmark": {
+    "description": "Settings item."
+  },
+  "settingsRerunBenchmarkHint": "Run the speed test again to update model recommendations.",
+  "@settingsRerunBenchmarkHint": {
+    "description": "Settings item hint."
+  },
+  "settingsAbout": "About",
+  "@settingsAbout": {
+    "description": "Settings section."
+  },
+  "settingsVersion": "Version {version}",
+  "@settingsVersion": {
+    "description": "App version.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "0.1.0 (1)"
+      }
+    }
+  },
+  "settingsModelLicenses": "Model licenses",
+  "@settingsModelLicenses": {
+    "description": "Settings item."
+  },
+  "settingsOpenSourceLicenses": "Open source licenses",
+  "@settingsOpenSourceLicenses": {
+    "description": "Settings item."
+  },
+  "modelLicensesIntro": "Each model has its own license. Read it before using a model's answers commercially.",
+  "@modelLicensesIntro": {
+    "description": "Model licenses intro."
+  },
+  "modelLicensesRestricted": "Has use restrictions you accept when downloading.",
+  "@modelLicensesRestricted": {
+    "description": "License with use restrictions."
+  },
+  "modelLicensesImported": "Imported by you. Check the license where you got the file.",
+  "@modelLicensesImported": {
+    "description": "Imported model license note."
+  },
+  "modelLicensesCopyLink": "Copy license link",
+  "@modelLicensesCopyLink": {
+    "description": "Tooltip."
+  },
+  "onboardingSkip": "Skip",
+  "@onboardingSkip": {
+    "description": "Onboarding skip button."
+  },
+  "onboardingNext": "Next",
+  "@onboardingNext": {
+    "description": "Onboarding next button."
+  },
+  "onboardingProgress": "Step {step} of {total}",
+  "@onboardingProgress": {
+    "description": "Screen reader label for the page dots.",
+    "placeholders": {
+      "step": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "onboardingHowTitle": "How it works",
+  "@onboardingHowTitle": {
+    "description": "Onboarding step 2 title."
+  },
+  "onboardingHowBody": "You download an AI model once. After that, it runs on your phone's processor.",
+  "@onboardingHowBody": {
+    "description": "Onboarding step 2 body."
+  },
+  "onboardingHowDownload": "Models are 0.5 to 3 GB. Download them on Wi-Fi.",
+  "@onboardingHowDownload": {
+    "description": "Onboarding fact."
+  },
+  "onboardingHowRuns": "Replies are written on this phone, even in airplane mode.",
+  "@onboardingHowRuns": {
+    "description": "Onboarding fact."
+  },
+  "onboardingHowLanguages": "Ask in Bengali or English.",
+  "@onboardingHowLanguages": {
+    "description": "Onboarding fact."
+  },
+  "onboardingDeviceTitle": "Your phone",
+  "@onboardingDeviceTitle": {
+    "description": "Onboarding step 3 title."
+  },
+  "onboardingDeviceBody": "Models need memory and a fast processor. Here is what this phone can run.",
+  "@onboardingDeviceBody": {
+    "description": "Onboarding step 3 body."
+  },
+  "onboardingDeviceMemory": "Memory: {size} GB",
+  "@onboardingDeviceMemory": {
+    "description": "Total RAM.",
+    "placeholders": {
+      "size": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        },
+        "example": "2.4"
+      }
+    }
+  },
+  "onboardingDeviceSpeedTest": "For more exact suggestions, run the speed test later in Settings.",
+  "@onboardingDeviceSpeedTest": {
+    "description": "Hint about the benchmark."
+  },
+  "onboardingModelTitle": "Your first model",
+  "@onboardingModelTitle": {
+    "description": "Onboarding step 4 title."
+  },
+  "onboardingModelBody": "This model suits your phone best. Download it now, or choose another later.",
+  "@onboardingModelBody": {
+    "description": "Onboarding step 4 body."
+  },
+  "onboardingModelReady": "A model is already on this phone. You can start chatting.",
+  "@onboardingModelReady": {
+    "description": "Onboarding step 4 body when a model exists."
+  },
+  "onboardingNoSuggestion": "No model in the list fits this phone well. You can still look at all models.",
+  "@onboardingNoSuggestion": {
+    "description": "No suitable model."
+  },
+  "onboardingDownloadStarted": "Downloading. It continues in the background.",
+  "@onboardingDownloadStarted": {
+    "description": "Download started."
+  },
+  "onboardingStart": "Start chatting",
+  "@onboardingStart": {
+    "description": "Onboarding finish button."
+  },
+  "onboardingBrowse": "See all models",
+  "@onboardingBrowse": {
+    "description": "Onboarding button to the models screen."
+  },
+  "modelsImportedDetails": "Imported by you, so its languages, speed and license are not known. Check where you got the file.",
+  "@modelsImportedDetails": {
+    "description": "Installed model card: imported file without catalog details."
+  },
+  "chatVoiceStart": "Type by voice",
+  "@chatVoiceStart": {
+    "description": "Tooltip of the microphone button in the message field."
+  },
+  "chatVoiceStop": "Stop listening",
+  "@chatVoiceStop": {
+    "description": "Tooltip of the button that stops voice typing."
+  },
+  "chatVoiceListening": "Listening…",
+  "@chatVoiceListening": {
+    "description": "Shown while voice typing listens."
+  },
+  "chatVoiceLanguage": "Voice language: {language}. Tap to change.",
+  "@chatVoiceLanguage": {
+    "description": "Tooltip and screen reader label of the voice language switch.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "voiceLanguageEnglish": "English",
+  "@voiceLanguageEnglish": {
+    "description": "Name of the English voice typing language."
+  },
+  "voiceLanguageBengali": "বাংলা",
+  "@voiceLanguageBengali": {
+    "description": "Name of the Bengali voice typing language, always in Bengali script."
+  },
+  "chatVoicePermission": "Allow the microphone to type by voice. What you say is recognized on your phone and never saved.",
+  "@chatVoicePermission": {
+    "description": "Shown when the microphone permission was refused."
+  },
+  "chatVoiceUnavailable": "This phone has no offline speech recognizer. Your keyboard's microphone may still work.",
+  "@chatVoiceUnavailable": {
+    "description": "Shown when the phone has no on-device speech recognizer."
+  },
+  "chatVoiceNotInstalled": "Offline {language} voice typing is not on this phone yet.",
+  "@chatVoiceNotInstalled": {
+    "description": "Shown when the language's offline speech pack is missing.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "chatVoiceNotInstalledManual": "Offline {language} voice typing is not on this phone. Add it in your phone's speech recognition settings.",
+  "@chatVoiceNotInstalledManual": {
+    "description": "Shown when the pack is missing and the app cannot download it.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "chatVoiceInstall": "Download",
+  "@chatVoiceInstall": {
+    "description": "Action that asks the phone to download the offline speech pack."
+  },
+  "chatVoiceInstallStarted": "Follow your phone's prompt to download offline {language} voice typing, then try again.",
+  "@chatVoiceInstallStarted": {
+    "description": "Shown after asking the phone to download a speech pack.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "chatVoiceDownloading": "Offline {language} voice typing is still downloading. Try again in a few minutes.",
+  "@chatVoiceDownloading": {
+    "description": "Shown when the speech pack is being downloaded.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "chatVoiceUnsupported": "This phone cannot recognize {language} offline. Try the other language, or your keyboard's microphone.",
+  "@chatVoiceUnsupported": {
+    "description": "Shown when the phone cannot recognize the language offline.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "chatVoiceNoSpeech": "Didn't catch that. Tap the microphone and try again.",
+  "@chatVoiceNoSpeech": {
+    "description": "Shown when nothing was recognized."
+  },
+  "chatVoiceBusy": "Another app is using the microphone. Try again in a moment.",
+  "@chatVoiceBusy": {
+    "description": "Shown when the recognizer is busy."
+  },
+  "chatVoiceFailed": "Voice typing stopped. Try again.",
+  "@chatVoiceFailed": {
+    "description": "Shown for any other voice typing error."
+  },
+  "chatVoiceStarting": "Getting ready…",
+  "@chatVoiceStarting": {
+    "description": "Shown while the speech recognizer starts, before the microphone is open."
+  },
+  "chatVoiceBackToEnglish": "Voice typing is back to English.",
+  "@chatVoiceBackToEnglish": {
+    "description": "Added when a language the phone cannot recognize was dropped."
+  },
+  "chatVoiceHoldHint": "change the voice language",
+  "@chatVoiceHoldHint": {
+    "description": "Screen reader hint for holding the microphone button."
+  },
+  "chatVoiceLanguageSet": "Voice typing now listens in {language}. Hold the microphone to change it.",
+  "@chatVoiceLanguageSet": {
+    "description": "Shown after holding the microphone button to switch language.",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-08",
+  "timezone": "Asia/Dhaka",
+  "method": "Direct inspection of eight Flutter widget-test captures in one batch",
+  "captures": [
+    "test/goldens/goldens/math_reply_bn_dark.png",
+    "test/goldens/goldens/math_reply_bn_light.png",
+    "test/goldens/goldens/math_reply_en_dark.png",
+    "test/goldens/goldens/math_reply_en_light.png",
+    "test/goldens/goldens/models_bn_dark.png",
+    "test/goldens/goldens/models_bn_light.png",
+    "test/goldens/goldens/models_en_dark.png",
+    "test/goldens/goldens/models_en_light.png"
+  ],
+  "observations": [
+    "Math renders as symbols and fractions alongside English and Bengali text.",
+    "Markdown emphasis, lists, blockquote, table and literal code remain visible.",
+    "Installed cards show verification, size, parameters, Bengali quality, description, speed reason and license.",
+    "Delete, pause/cancel, Wi-Fi and catalog controls remain present.",
+    "Light/dark captures show readable text and matching theme colors."
+  ],
+  "limitations": [
+    "Captured at widget-test level on Linux; no physical-device claim.",
+    "Wide and large-text layouts are verified by focused widget tests rather than additional unbounded visual iteration."
+  ]
+}

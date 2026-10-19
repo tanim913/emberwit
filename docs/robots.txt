@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tanim913.github.io/emberwit/sitemap.xml

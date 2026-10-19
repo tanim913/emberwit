@@ -1,0 +1,47 @@
+{
+  "packaging_inputs": {
+    "pubspec.yaml": {
+      "before_sha256": "78bcb93d6640c596cb3a6d78ee490c6a4d943d3486b13dccfd079f57eaff3830",
+      "after_sha256": "78bcb93d6640c596cb3a6d78ee490c6a4d943d3486b13dccfd079f57eaff3830",
+      "unchanged": true
+    },
+    "pubspec.lock": {
+      "before_sha256": "2cbcf181e5aeeaa829a83d1c8fe71ecd5efd6ecec3651912c33722216a3bb8a2",
+      "after_sha256": "2cbcf181e5aeeaa829a83d1c8fe71ecd5efd6ecec3651912c33722216a3bb8a2",
+      "unchanged": true
+    },
+    "android/app/build.gradle.kts": {
+      "before_sha256": "27e81f492bb653b6da67c2914d615a97da3513093cf59f63bc670184e8deff77",
+      "after_sha256": "27e81f492bb653b6da67c2914d615a97da3513093cf59f63bc670184e8deff77",
+      "unchanged": true
+    },
+    "assets/models/benchmark.gguf": {
+      "before_sha256": "bcc3af2849ad6095af57e9b5cd43775256efdc66e306acb529172f92d0c04b03",
+      "after_sha256": "bcc3af2849ad6095af57e9b5cd43775256efdc66e306acb529172f92d0c04b03",
+      "unchanged": true
+    }
+  },
+  "implementation_files_unchanged": {
+    "pubspec.yaml": true,
+    "pubspec.lock": true,
+    "docs/DEPENDENCIES.md": true,
+    "lib/features/chat/presentation/widgets/message_view.dart": true,
+    "lib/features/model_manager/presentation/models_controller.dart": true,
+    "lib/features/model_manager/presentation/models_page.dart": true,
+    "lib/l10n/arb/app_en.arb": true,
+    "lib/l10n/arb/app_bn.arb": true,
+    "test/features/model_manager/presentation/models_page_test.dart": true,
+    "test/goldens/goldens/models_bn_dark.png": true,
+    "test/goldens/goldens/models_bn_light.png": true,
+    "test/goldens/goldens/models_en_light.png": true,
+    "test/goldens/goldens/models_en_dark.png": true,
+    "lib/features/chat/presentation/widgets/reply_math.dart": true,
+    "test/features/chat/presentation/reply_math_test.dart": true,
+    "test/features/model_manager/presentation/models_state_test.dart": true,
+    "assets/fonts/KaTeX-LICENSE.txt": true,
+    "test/goldens/goldens/math_reply_en_light.png": true,
+    "test/goldens/goldens/math_reply_en_dark.png": true,
+    "test/goldens/goldens/math_reply_bn_dark.png": true,
+    "test/goldens/goldens/math_reply_bn_light.png": true
+  }
+}

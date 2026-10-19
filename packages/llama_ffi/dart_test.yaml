@@ -1,0 +1,4 @@
+tags:
+  native:
+    description: Needs the host native build (LLAMA_FFI_LIB_DIR) and the test
+      model (tool/fetch_test_model.sh).

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark mode: near-black canvas, AppColors.gray900. -->
+<resources>
+    <color name="canvas">#FF212529</color>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Native window colors, matching the Flutter canvas (lib/app/theme/app_colors.dart)
+     so launch and resume never flash a mismatched color. -->
+<resources>
+    <color name="canvas">#FFF8F9FA</color>
+    <!-- Adaptive launcher icon background (tool/branding/generate_icons.py). -->
+    <color name="ic_launcher_background">#FF212529</color>
+</resources>

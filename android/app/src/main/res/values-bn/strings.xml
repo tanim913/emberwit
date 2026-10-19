@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home screen voice widget. -->
+    <string name="widget_voice_label">Emberwit-কে বলুন</string>
+    <string name="widget_voice_description">চাপ দিয়ে Emberwit-কে বলুন: প্রশ্ন, অ্যালার্ম, টাইমার, টর্চ বা কোনো অ্যাপ খোলা। ইন্টারনেট ছাড়াই চলে।</string>
+</resources>

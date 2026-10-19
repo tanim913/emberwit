@@ -1,0 +1,1 @@
+build/unit_test_assets/NOTICES.Z: KaTeX font notice included = True

@@ -1,0 +1,6 @@
+{
+  "pubspec.yaml": "78bcb93d6640c596cb3a6d78ee490c6a4d943d3486b13dccfd079f57eaff3830",
+  "pubspec.lock": "2cbcf181e5aeeaa829a83d1c8fe71ecd5efd6ecec3651912c33722216a3bb8a2",
+  "android/app/build.gradle.kts": "27e81f492bb653b6da67c2914d615a97da3513093cf59f63bc670184e8deff77",
+  "assets/models/benchmark.gguf": "bcc3af2849ad6095af57e9b5cd43775256efdc66e306acb529172f92d0c04b03"
+}

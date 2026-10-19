@@ -1,0 +1,1 @@
+offline,ai,chat,assistant,private,llm,bengali,bangla,on-device,no internet,local,secure

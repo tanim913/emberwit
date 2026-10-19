@@ -1,0 +1,1233 @@
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -26,6 +26,7 @@
+   flutter_localizations:
+     sdk: flutter
+   flutter_markdown_plus: 1.0.12
++  flutter_math_fork: 0.7.4
+   flutter_riverpod: 3.4.3
+   flutter_secure_storage: 11.2.0
+   freezed_annotation: 3.1.0
+@@ -75,6 +76,9 @@
+   uses-material-design: true
+   generate: true
+ 
++  licenses:
++    - assets/fonts/KaTeX-LICENSE.txt
++
+   assets:
+     - assets/fonts/OFL.txt
+     # Micro benchmark model, fetched by tool/fetch_benchmark_model.sh.
+--- a/pubspec.lock
++++ b/pubspec.lock
+@@ -416,6 +416,14 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "1.0.12"
++  flutter_math_fork:
++    dependency: "direct main"
++    description:
++      name: flutter_math_fork
++      sha256: "6d5f2f1aa57ae539ffb0a04bb39d2da67af74601d685a161aff7ce5bda5fa407"
++      url: "https://pub.dev"
++    source: hosted
++    version: "0.7.4"
+   flutter_plugin_android_lifecycle:
+     dependency: transitive
+     description:
+@@ -480,6 +488,14 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "4.2.2"
++  flutter_svg:
++    dependency: transitive
++    description:
++      name: flutter_svg
++      sha256: "35882981abcbfb8c15b286f0cd690ff25bac12d95eff3e25ee207f37d4c42e7f"
++      url: "https://pub.dev"
++    source: hosted
++    version: "2.3.0"
+   flutter_test:
+     dependency: "direct dev"
+     description: flutter
+@@ -787,6 +803,14 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "0.19.5"
++  nested:
++    dependency: transitive
++    description:
++      name: nested
++      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
++      url: "https://pub.dev"
++    source: hosted
++    version: "1.0.0"
+   nm:
+     dependency: transitive
+     description:
+@@ -835,6 +859,14 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "1.9.1"
++  path_parsing:
++    dependency: transitive
++    description:
++      name: path_parsing
++      sha256: "883402936929eac138ee0a45da5b0f2c80f89913e6dc3bf77eb65b84b409c6ca"
++      url: "https://pub.dev"
++    source: hosted
++    version: "1.1.0"
+   path_provider:
+     dependency: "direct main"
+     description:
+@@ -923,6 +955,14 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "5.0.6"
++  provider:
++    dependency: transitive
++    description:
++      name: provider
++      sha256: "4e82183fa20e5ca25703ead7e05de9e4cceed1fbd1eadc1ac3cb6f565a09f272"
++      url: "https://pub.dev"
++    source: hosted
++    version: "6.1.5+1"
+   pub_semver:
+     dependency: transitive
+     description:
+@@ -1168,6 +1208,14 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "0.7.12"
++  tuple:
++    dependency: transitive
++    description:
++      name: tuple
++      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
++      url: "https://pub.dev"
++    source: hosted
++    version: "2.0.2"
+   typed_data:
+     dependency: transitive
+     description:
+@@ -1256,6 +1304,30 @@
+       url: "https://pub.dev"
+     source: hosted
+     version: "4.6.0"
++  vector_graphics:
++    dependency: transitive
++    description:
++      name: vector_graphics
++      sha256: "9d0e3b9cb16542ad660daee871e726a10d13a93b7b5391677c3160e8f5e83935"
++      url: "https://pub.dev"
++    source: hosted
++    version: "1.2.3"
++  vector_graphics_codec:
++    dependency: transitive
++    description:
++      name: vector_graphics_codec
++      sha256: "99fd9fbd34d9f9a32efd7b6a6aae14125d8237b10403b422a6a6dfeac2806146"
++      url: "https://pub.dev"
++    source: hosted
++    version: "1.1.13"
++  vector_graphics_compiler:
++    dependency: transitive
++    description:
++      name: vector_graphics_compiler
++      sha256: "4dca4feb77dc3ec7f6e27e49c53241eb8217f55e4f9b12599a27f8903bca5682"
++      url: "https://pub.dev"
++    source: hosted
++    version: "1.3.0"
+   vector_math:
+     dependency: transitive
+     description:
+--- a/docs/DEPENDENCIES.md
++++ b/docs/DEPENDENCIES.md
+@@ -40,6 +40,7 @@
+ | sqlite3 | 3.6.0 | MIT | SQLite bindings; its build hook bundles SQLCipher (`hooks.user_defines.sqlite3.source: sqlcipher`). SQLCipher itself is BSD-3-Clause style (Zetetic), linking OpenSSL on Android (Apache-2.0). |
+ | flutter_secure_storage | 11.2.0 | BSD-3-Clause | Keeps the database key in the Android Keystore / iOS Keychain. |
+ | flutter_markdown_plus | 1.0.12 | BSD-3-Clause | Markdown rendering of replies (maintained fork of flutter_markdown). |
++| flutter_math_fork | 0.7.4 | Apache-2.0 | Offline TeX equations inside reply Markdown; app-owned delimiter parsing preserves code, currency, incomplete streaming and invalid-formula fallback. Bundles KaTeX fonts (MIT). |
+ | markdown | 7.3.1 | BSD-3-Clause | Markdown parser; pinned because the app customises its syntaxes (HTML as text). |
+ | url_launcher | 6.3.2 | BSD-3-Clause | Opens links from replies after confirmation. Flutter team package. |
+ | uuid | 4.6.0 | MIT | Conversation and message ids. |
+--- a/lib/features/chat/presentation/widgets/message_view.dart
++++ b/lib/features/chat/presentation/widgets/message_view.dart
+@@ -4,6 +4,7 @@
+ import 'package:emberwit/core/widgets/action_colors.dart';
+ import 'package:emberwit/features/chat/domain/chat_models.dart';
+ import 'package:emberwit/features/chat/domain/chat_template.dart';
++import 'package:emberwit/features/chat/presentation/widgets/reply_math.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter/services.dart';
+ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+@@ -205,46 +206,57 @@
+   Widget build(BuildContext context) {
+     final theme = Theme.of(context);
+     final scheme = theme.colorScheme;
+-    return MarkdownBody(
+-      data: text,
+-      selectable: true,
+-      // Tried before the built-in HTML block syntax, which cannot be
+-      // removed: raw HTML blocks become visible plain text.
+-      blockSyntaxes: const [HtmlBlockAsTextSyntax()],
+-      extensionSet: md.ExtensionSet(
+-        md.ExtensionSet.gitHubFlavored.blockSyntaxes
+-            .where((s) => s is! md.HtmlBlockSyntax)
+-            .toList(),
+-        md.ExtensionSet.gitHubFlavored.inlineSyntaxes
+-            .where((s) => s is! md.InlineHtmlSyntax)
+-            .toList(),
++    return LayoutBuilder(
++      builder: (context, constraints) => MarkdownBody(
++        data: text,
++        selectable: true,
++        // Tried before the built-in HTML block syntax, which cannot be
++        // removed: raw HTML blocks become visible plain text.
++        blockSyntaxes: const [ReplyMathBlockSyntax(), HtmlBlockAsTextSyntax()],
++        inlineSyntaxes: [ReplyMathInlineSyntax()],
++        extensionSet: md.ExtensionSet(
++          md.ExtensionSet.gitHubFlavored.blockSyntaxes
++              .where((s) => s is! md.HtmlBlockSyntax)
++              .toList(),
++          md.ExtensionSet.gitHubFlavored.inlineSyntaxes
++              .where((s) => s is! md.InlineHtmlSyntax)
++              .toList(),
++        ),
++        styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
++          code: theme.textTheme.bodyMedium
++              ?.merge(monospaceText)
++              .copyWith(backgroundColor: scheme.surfaceContainerHighest),
++          // The code block builder draws its own container.
++          codeblockDecoration: const BoxDecoration(),
++          codeblockPadding: EdgeInsets.zero,
++          tableColumnWidth: const IntrinsicColumnWidth(),
++          a: TextStyle(
++            color: scheme.primary,
++            decoration: TextDecoration.underline,
++            decorationColor: scheme.primary,
++          ),
++        ),
++        builders: {
++          'pre': _CodeBlockBuilder(),
++          'math-inline': ReplyMathBuilder(maxWidth: constraints.maxWidth),
++          'math-block': ReplyMathBuilder(
++            maxWidth: constraints.maxWidth,
++            block: true,
++          ),
++        },
++        imageBuilder: (uri, title, alt) => Text(
++          context.l10n.chatImageBlocked(alt ?? title ?? uri.host),
++          style: theme.textTheme.bodySmall?.copyWith(
++            color: scheme.onSurfaceVariant,
++            fontStyle: FontStyle.italic,
++          ),
++        ),
++        onTapLink: (label, href, title) {
++          if (href != null) {
++            unawaited(confirmAndOpenLink(context, href, openLink));
++          }
++        },
+       ),
+-      styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+-        code: theme.textTheme.bodyMedium
+-            ?.merge(monospaceText)
+-            .copyWith(backgroundColor: scheme.surfaceContainerHighest),
+-        // The code block builder draws its own container.
+-        codeblockDecoration: const BoxDecoration(),
+-        codeblockPadding: EdgeInsets.zero,
+-        a: TextStyle(
+-          color: scheme.primary,
+-          decoration: TextDecoration.underline,
+-          decorationColor: scheme.primary,
+-        ),
+-      ),
+-      builders: {'pre': _CodeBlockBuilder()},
+-      imageBuilder: (uri, title, alt) => Text(
+-        context.l10n.chatImageBlocked(alt ?? title ?? uri.host),
+-        style: theme.textTheme.bodySmall?.copyWith(
+-          color: scheme.onSurfaceVariant,
+-          fontStyle: FontStyle.italic,
+-        ),
+-      ),
+-      onTapLink: (label, href, title) {
+-        if (href != null) {
+-          unawaited(confirmAndOpenLink(context, href, openLink));
+-        }
+-      },
+     );
+   }
+ }
+--- a/lib/features/model_manager/presentation/models_controller.dart
++++ b/lib/features/model_manager/presentation/models_controller.dart
+@@ -79,6 +79,28 @@
+ 
+   /// Catalog entry for a model being downloaded.
+   CatalogEntry? entryFor(String modelId) => catalog?.catalog.entry(modelId);
++
++  /// Saved metadata remains available offline or after catalog removal.
++  CatalogEntry? entryForInstalled(InstalledModel model) {
++    final saved = model.catalogEntry;
++    if (saved != null) return saved;
++    final current = entryFor(model.id);
++    return model.verification == ModelVerification.verified &&
++            current?.sha256 == model.sha256
++        ? current
++        : null;
++  }
++
++  /// Running an installed model does not require space to download it again.
++  ModelRecommendation? recommendationForInstalled(InstalledModel model) {
++    final entry = entryForInstalled(model);
++    final device = profile;
++    if (entry == null || device == null) return null;
++    return const RecommendationEngine().recommend(
++      entry.toSpec(isInstalled: true),
++      device,
++    );
++  }
+ }
+ 
+ /// Drives the models screen: catalog, recommendations, downloads, imports.
+--- a/lib/features/model_manager/presentation/models_page.dart
++++ b/lib/features/model_manager/presentation/models_page.dart
+@@ -78,6 +78,8 @@
+               for (final model in state.library.installed)
+                 _InstalledTile(
+                   model: model,
++                  entry: state.entryForInstalled(model),
++                  recommendation: state.recommendationForInstalled(model),
+                   onDelete: () => _confirmDelete(context, controller, model),
+                 ),
+             ],
+@@ -237,9 +239,16 @@
+ }
+ 
+ class _InstalledTile extends StatelessWidget {
+-  const new({required this.model, required this.onDelete});
++  const new({
++    required this.model,
++    required this.entry,
++    required this.recommendation,
++    required this.onDelete,
++  });
+ 
+   final InstalledModel model;
++  final CatalogEntry? entry;
++  final ModelRecommendation? recommendation;
+   final VoidCallback onDelete;
+ 
+   @override
+@@ -248,10 +257,12 @@
+     final theme = Theme.of(context);
+     final verified = model.verification == ModelVerification.verified;
+     return Card(
++      key: Key('installed-${model.id}'),
+       margin: const EdgeInsets.only(bottom: 8),
+       child: Padding(
+         padding: const EdgeInsets.fromLTRB(16, 12, 4, 12),
+         child: Row(
++          crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Expanded(
+               child: Column(
+@@ -285,6 +296,20 @@
+                       ),
+                     ],
+                   ),
++                  const SizedBox(height: 8),
++                  if (entry case final details?)
++                    _ModelDetails(
++                      entry: details,
++                      recommendation: recommendation,
++                      showSize: false,
++                    )
++                  else
++                    Text(
++                      l10n.modelsImportedDetailsUnknown,
++                      style: theme.textTheme.bodySmall?.copyWith(
++                        color: theme.colorScheme.onSurfaceVariant,
++                      ),
++                    ),
+                 ],
+               ),
+             ),
+@@ -445,8 +470,6 @@
+     final entry = model.entry;
+     final recommendation = model.recommendation;
+     final label = recommendation?.label;
+-    final languageCode = Localizations.localeOf(context).languageCode;
+-    final reason = recommendation?.reasons.firstOrNull;
+     final button = Text(l10n.modelsDownload);
+     final downloadKey = Key('download-${entry.id}');
+ 
+@@ -470,34 +493,7 @@
+               ],
+             ),
+             const SizedBox(height: 4),
+-            Text(
+-              [
+-                l10n.modelsSize(gigabytes(entry.fileSizeBytes)),
+-                l10n.modelsParameters(entry.parameterCount),
+-                l10n.modelsBengaliQuality(
+-                  languageQualityText(l10n, entry.qualityFor('bn')),
+-                ),
+-              ].join(' · '),
+-              style: theme.textTheme.bodySmall?.copyWith(
+-                color: theme.colorScheme.onSurfaceVariant,
+-              ),
+-            ),
+-            const SizedBox(height: 8),
+-            Text(entry.descriptionFor(languageCode)),
+-            if (reason != null) ...[
+-              const SizedBox(height: 8),
+-              Text(
+-                describeRecommendationReason(l10n, reason),
+-                style: theme.textTheme.bodySmall,
+-              ),
+-            ],
+-            const SizedBox(height: 4),
+-            Text(
+-              l10n.modelsLicense(entry.license.name),
+-              style: theme.textTheme.bodySmall?.copyWith(
+-                color: theme.colorScheme.onSurfaceVariant,
+-              ),
+-            ),
++            _ModelDetails(entry: entry, recommendation: recommendation),
+             const SizedBox(height: 12),
+             switch (label) {
+               RecommendationLabel.notSupported => FilledButton(
+@@ -519,6 +515,64 @@
+           ],
+         ),
+       ),
++    );
++  }
++}
++
++/// Identical catalog facts for models before and after download.
++class _ModelDetails extends StatelessWidget {
++  const new({
++    required this.entry,
++    required this.recommendation,
++    this.showSize = true,
++  });
++
++  final CatalogEntry entry;
++  final ModelRecommendation? recommendation;
++  final bool showSize;
++
++  @override
++  Widget build(BuildContext context) {
++    final l10n = context.l10n;
++    final theme = Theme.of(context);
++    final languageCode = Localizations.localeOf(context).languageCode;
++    final reason = recommendation?.reasons.firstOrNull;
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.start,
++      children: [
++        Text(
++          [
++            if (showSize) l10n.modelsSize(gigabytes(entry.fileSizeBytes)),
++            l10n.modelsParameters(entry.parameterCount),
++            l10n.modelsBengaliQuality(
++              languageQualityText(l10n, entry.qualityFor('bn')),
++            ),
++          ].join(' · '),
++          style: theme.textTheme.bodySmall?.copyWith(
++            color: theme.colorScheme.onSurfaceVariant,
++          ),
++        ),
++        const SizedBox(height: 8),
++        Text(entry.descriptionFor(languageCode)),
++        if (reason != null) ...[
++          const SizedBox(height: 8),
++          Text(
++            describeRecommendationReason(l10n, reason),
++            style: theme.textTheme.bodySmall,
++          ),
++          if (recommendation!.reasons.any(
++            (r) => r is SpeedEstimatedWithoutBenchmark,
++          ))
++            Text(l10n.reasonSpeedEstimated, style: theme.textTheme.bodySmall),
++        ],
++        const SizedBox(height: 4),
++        Text(
++          l10n.modelsLicense(entry.license.name),
++          style: theme.textTheme.bodySmall?.copyWith(
++            color: theme.colorScheme.onSurfaceVariant,
++          ),
++        ),
++      ],
+     );
+   }
+ }
+--- a/lib/l10n/arb/app_en.arb
++++ b/lib/l10n/arb/app_en.arb
+@@ -935,6 +935,10 @@
+   "@languageQualityUnknown": {
+     "description": "Language quality level unknown."
+   },
++  "modelsImportedDetailsUnknown": "Parameter count, language support and license are unknown for imported models.",
++  "@modelsImportedDetailsUnknown": {
++    "description": "Explains missing catalog metadata for an imported model."
++  },
+   "modelsLicense": "License: {name}",
+   "@modelsLicense": {
+     "description": "License line of a model.",
+--- a/lib/l10n/arb/app_bn.arb
++++ b/lib/l10n/arb/app_bn.arb
+@@ -132,6 +132,7 @@
+   "languageQualityBasic": "মোটামুটি",
+   "languageQualityLimited": "সীমিত",
+   "languageQualityUnknown": "মূল্যায়ন নেই",
++  "modelsImportedDetailsUnknown": "আমদানি করা মডেলের প্যারামিটার সংখ্যা, ভাষার সমর্থন ও লাইসেন্স অজানা।",
+   "modelsLicense": "লাইসেন্স: {name}",
+   "modelsDownload": "ডাউনলোড করুন",
+   "modelsVerified": "যাচাইকৃত",
+--- a/test/features/model_manager/presentation/models_page_test.dart
++++ b/test/features/model_manager/presentation/models_page_test.dart
+@@ -42,13 +42,16 @@
+   Locale locale = const Locale('en'),
+   ThemeMode themeMode = ThemeMode.light,
+   double height = 5200,
++  double width = 1080,
++  double textScale = 1,
++  ModelCatalog? catalog,
+ }) async {
+   tester.view
+-    ..physicalSize = Size(1080, height)
++    ..physicalSize = Size(width, height)
+     ..devicePixelRatio = 3;
+   addTearDown(tester.view.reset);
+   final snapshot = CatalogSnapshot(
+-    catalog: _seed,
++    catalog: catalog ?? _seed,
+     source: source,
+     loadedAt: DateTime.utc(2026, 9, 24),
+   );
+@@ -80,6 +83,11 @@
+         locale: locale,
+         supportedLocales: AppLocalizations.supportedLocales,
+         localizationsDelegates: AppLocalizations.localizationsDelegates,
++        builder: (context, child) => MediaQuery(
++          data: MediaQuery.of(context)
++              .copyWith(textScaler: TextScaler.linear(textScale)),
++          child: child!,
++        ),
+         home: const ModelsPage(),
+       ),
+     ),
+@@ -219,6 +227,93 @@
+     await tester.tap(find.byKey(const Key('confirm-delete')));
+     await tester.pumpAndSettle();
+     expect(library.calls, ['delete:qwen3-0.6b-q4_k_m']);
++  });
++
++  testWidgets('download completion keeps all the model details visible', (
++    tester,
++  ) async {
++    final entry = _seed.entry('llama3.2-3b-q4_k_m')!;
++    final library = FakeModelLibrary();
++    await _pump(tester, library: library);
++    library.set(LibraryState(installed: [_installed(entry)]));
++    await tester.pumpAndSettle();
++    final card = find.byKey(Key('installed-${entry.id}'));
++    Finder detail(String value) =>
++        find.descendant(of: card, matching: find.textContaining(value));
++    expect(detail('parameters'), findsOneWidget);
++    expect(detail('Bengali: limited'), findsOneWidget);
++    expect(detail(entry.descriptionFor('en')), findsOneWidget);
++    expect(detail('Llama 3.2 Community License'), findsOneWidget);
++    expect(detail('tokens per second'), findsOneWidget);
++    expect(find.byKey(Key('download-${entry.id}')), findsNothing);
++    expect(find.byKey(Key('delete-${entry.id}')), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('restored models keep details offline without a catalog entry', (
++    tester,
++  ) async {
++    final entry = _seed.entry('llama3.2-3b-q4_k_m')!;
++    final restored = InstalledModel.fromJson(_installed(entry).toJson());
++    await _pump(
++      tester,
++      library: FakeModelLibrary(LibraryState(installed: [restored])),
++      catalog: _seed.copyWith(models: []),
++      source: CatalogSource.cache,
++      refresh: const Err(CatalogFailure(CatalogFailureReason.network)),
++    );
++    expect(find.text(entry.descriptionFor('en')), findsOneWidget);
++    expect(find.textContaining('Bengali: limited'), findsOneWidget);
++    expect(find.text('License: Llama 3.2 Community License'), findsOneWidget);
++  });
++
++  testWidgets('installed details fit narrow screens with Bengali large text', (
++    tester,
++  ) async {
++    final entry = _seed.entry('llama3.2-3b-q4_k_m')!;
++    await _pump(
++      tester,
++      library: FakeModelLibrary(LibraryState(installed: [_installed(entry)])),
++      catalog: _seed.copyWith(models: []),
++      width: 960,
++      locale: const Locale('bn'),
++      themeMode: ThemeMode.dark,
++      textScale: 2,
++    );
++    expect(find.text(entry.descriptionFor('bn')), findsOneWidget);
++    expect(find.textContaining('বাংলা:'), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('imports show unknown metadata without borrowing catalog facts', (
++    tester,
++  ) async {
++    final entry = _seed.entry('qwen3-0.6b-q4_k_m')!;
++    final imported = _installed(entry).copyWith(
++      id: 'imported-custom',
++      catalogEntry: null,
++      verification: ModelVerification.unverified,
++    );
++    await _pump(
++      tester,
++      library: FakeModelLibrary(LibraryState(installed: [imported])),
++    );
++    final card = find.byKey(const Key('installed-imported-custom'));
++    expect(
++      find.descendant(of: card, matching: find.textContaining('unknown')),
++      findsOneWidget,
++    );
++    expect(
++      find.descendant(of: card, matching: find.textContaining('MIT License')),
++      findsNothing,
++    );
++    expect(
++      find.descendant(
++        of: card,
++        matching: find.text('Unverified import · 0.5 GB'),
++      ),
++      findsOneWidget,
++    );
+   });
+ 
+   testWidgets('import errors are explained', (tester) async {
+--- /dev/null
++++ b/lib/features/chat/presentation/widgets/reply_math.dart
+@@ -0,0 +1,222 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
++import 'package:flutter_math_fork/flutter_math.dart';
++import 'package:markdown/markdown.dart' as md;
++
++/// Math delimiters, parsed before Markdown consumes backslash escapes.
++///
++/// Code spans and fenced code are handled by Markdown itself. Dollar math
++/// requires non-space boundaries and cannot end just before a digit, so
++/// ordinary prices such as `$10 and $20` remain text.
++class ReplyMathInlineSyntax extends md.InlineSyntax {
++  /// Creates the syntax.
++  new() : super(r'\$\$|\$(?!\$)|\\\(|\\\[');
++
++  @override
++  bool tryMatch(md.InlineParser parser, [int? startMatchPos]) {
++    final start = startMatchPos ?? parser.pos;
++    final match = pattern.matchAsPrefix(parser.source, start);
++    if (match == null || _escaped(parser.source, start)) return false;
++    final opener = match[0]!;
++    if (opener == r'$' && start > 0 && parser.source[start - 1] == r'$') {
++      return false;
++    }
++    final closer = switch (opener) {
++      r'\(' => r'\)',
++      r'\[' => r'\]',
++      _ => opener,
++    };
++    final bodyStart = start + opener.length;
++    final source = parser.source;
++    var end = bodyStart;
++    while (end < source.length && source[end] != '\n') {
++      if (source.startsWith(closer, end) && !_escaped(source, end)) break;
++      end++;
++    }
++    final closed = source.startsWith(closer, end);
++    if (!closed) {
++      // Preserve explicit, unfinished TeX while tokens are still arriving.
++      // A lone dollar can be currency, so leave it to the normal parser.
++      if (opener == r'$') return false;
++      parser
++        ..writeText()
++        ..addNode(md.Text(source.substring(start, end)))
++        ..consume(end - start);
++      return true;
++    }
++    final expression = source.substring(bodyStart, end);
++    if (expression.trim().isEmpty) return false;
++    if (opener == r'$' &&
++        (expression.trim() != expression ||
++            (end + 1 < source.length &&
++                RegExp(r'\d').hasMatch(source[end + 1])))) {
++      return false;
++    }
++    final element = md.Element.text('math-inline', expression);
++    element.attributes['source'] = source.substring(start, end + closer.length);
++    element.attributes['display'] = (opener != r'$' && opener != r'\(')
++        .toString();
++    parser
++      ..writeText()
++      ..addNode(element)
++      ..consume(end + closer.length - start);
++    return true;
++  }
++
++  @override
++  bool onMatch(md.InlineParser parser, Match match) => false;
++}
++
++bool _escaped(String source, int offset) {
++  var slashes = 0;
++  for (var i = offset - 1; i >= 0 && source[i] == r'\'; i--) {
++    slashes++;
++  }
++  return slashes.isOdd;
++}
++
++/// Display equations on their own lines, including multiline environments.
++class ReplyMathBlockSyntax extends md.BlockSyntax {
++  /// Creates the syntax.
++  const new();
++
++  @override
++  RegExp get pattern => RegExp(r'^ {0,3}(\$\$|\\\[)');
++
++  @override
++  md.Node parse(md.BlockParser parser) {
++    final first = parser.current.content;
++    final match = pattern.firstMatch(first)!;
++    final opener = match[1]!;
++    final closer = opener == r'$$' ? r'$$' : r'\]';
++    final raw = <String>[];
++    final body = <String>[];
++    var line = first.substring(match.end);
++    while (!parser.isDone) {
++      raw.add(parser.current.content);
++      final end = line.lastIndexOf(closer);
++      if (end >= 0 &&
++          !_escaped(line, end) &&
++          line.substring(end + closer.length).trim().isEmpty) {
++        body.add(line.substring(0, end));
++        parser.advance();
++        final element = md.Element.text('math-block', body.join('\n').trim());
++        element.attributes['source'] = raw.join('\n');
++        return element;
++      }
++      body.add(line);
++      parser.advance();
++      if (!parser.isDone) line = parser.current.content;
++    }
++    // Do not ask Markdown to interpret incomplete equations as emphasis,
++    // links or HTML. Keep the source visible until a closing token arrives.
++    return md.Element('p', [md.Text(raw.join('\n'))]);
++  }
++}
++
++/// Builds offline equations inside the existing Markdown widget tree.
++class ReplyMathBuilder extends MarkdownElementBuilder {
++  /// Creates an inline or display equation builder.
++  new({required this.maxWidth, this.block = false});
++
++  /// Available width, including for embedded inline widgets.
++  final double maxWidth;
++
++  /// Whether the element occupies its own block.
++  final bool block;
++
++  @override
++  bool isBlockElement() => block;
++
++  @override
++  Widget visitElementAfterWithContext(
++    BuildContext context,
++    md.Element element,
++    TextStyle? preferredStyle,
++    TextStyle? parentStyle,
++  ) => Padding(
++    padding: block ? const EdgeInsets.symmetric(vertical: 8) : EdgeInsets.zero,
++    child: _ReplyEquation(
++      expression: element.textContent,
++      source: element.attributes['source'] ?? element.textContent,
++      display: block || element.attributes['display'] == 'true',
++      maxWidth: maxWidth,
++      style: parentStyle ?? Theme.of(context).textTheme.bodyMedium!,
++    ),
++  );
++}
++
++class _ReplyEquation extends StatefulWidget {
++  const new({
++    required this.expression,
++    required this.source,
++    required this.display,
++    required this.maxWidth,
++    required this.style,
++  });
++
++  final String expression;
++  final String source;
++  final bool display;
++  final double maxWidth;
++  final TextStyle style;
++
++  @override
++  State<_ReplyEquation> createState() => _ReplyEquationState();
++}
++
++class _ReplyEquationState extends State<_ReplyEquation> {
++  Math? _parsed;
++
++  @override
++  void initState() {
++    super.initState();
++    _parse();
++  }
++
++  @override
++  void didUpdateWidget(_ReplyEquation oldWidget) {
++    super.didUpdateWidget(oldWidget);
++    if (widget.expression != oldWidget.expression) _parse();
++  }
++
++  void _parse() {
++    // Bound work for untrusted model output. Reuse the parsed tree when
++    // streaming changes another part of the reply, or the theme changes.
++    _parsed = widget.expression.length > 8192
++        ? null
++        : Math.tex(
++            widget.expression,
++            settings: const TexParserSettings(
++              maxExpand: 100,
++              strict: Strict.ignore,
++            ),
++          );
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    final parsed = _parsed;
++    final child = parsed == null
++        ? Text(widget.source, style: widget.style)
++        : Math(
++            ast: parsed.ast,
++            parseError: parsed.parseError,
++            mathStyle: widget.display ? MathStyle.display : MathStyle.text,
++            textStyle: widget.style,
++            onErrorFallback: (_) => Text(widget.source, style: widget.style),
++          );
++    return Semantics(
++      label: widget.source,
++      child: ExcludeSemantics(
++        child: ConstrainedBox(
++          constraints: BoxConstraints(maxWidth: widget.maxWidth),
++          child: SingleChildScrollView(
++            scrollDirection: Axis.horizontal,
++            child: child,
++          ),
++        ),
++      ),
++    );
++  }
++}
+--- /dev/null
++++ b/test/features/chat/presentation/reply_math_test.dart
+@@ -0,0 +1,275 @@
++import 'package:emberwit/app/theme/app_theme.dart';
++import 'package:emberwit/features/chat/domain/chat_models.dart';
++import 'package:emberwit/features/chat/presentation/widgets/message_view.dart';
++import 'package:emberwit/features/chat/presentation/widgets/reply_math.dart';
++import 'package:emberwit/l10n/gen/app_localizations.dart';
++import 'package:flutter/material.dart';
++import 'package:flutter/services.dart';
++import 'package:flutter_math_fork/flutter_math.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:markdown/markdown.dart' as md;
++
++List<md.Node> _parse(String text) => md.Document(
++  blockSyntaxes: const [ReplyMathBlockSyntax()],
++  inlineSyntaxes: [ReplyMathInlineSyntax()],
++  extensionSet: md.ExtensionSet.gitHubFlavored,
++).parseLines(text.split('\n'));
++
++Iterable<md.Element> _elements(List<md.Node> nodes) sync* {
++  for (final node in nodes) {
++    if (node is md.Element) {
++      yield node;
++      yield* _elements(node.children ?? []);
++    }
++  }
++}
++
++Future<void> _pump(
++  WidgetTester tester,
++  String text, {
++  bool streaming = false,
++  Locale locale = const Locale('en'),
++  ThemeMode mode = ThemeMode.light,
++  double scale = 1,
++}) async {
++  await tester.pumpWidget(
++    MaterialApp(
++      debugShowCheckedModeBanner: false,
++      theme: AppTheme.light(),
++      darkTheme: AppTheme.dark(),
++      themeMode: mode,
++      locale: locale,
++      supportedLocales: AppLocalizations.supportedLocales,
++      localizationsDelegates: AppLocalizations.localizationsDelegates,
++      home: Scaffold(
++        body: MediaQuery(
++          data: MediaQueryData(textScaler: TextScaler.linear(scale)),
++          child: SingleChildScrollView(
++            padding: const EdgeInsets.all(16),
++            child: MessageView(
++              streaming: streaming,
++              message: ChatMessage(
++                id: 'math',
++                conversationId: 'c',
++                role: MessageRole.assistant,
++                content: text,
++                createdAt: DateTime.utc(2026),
++              ),
++            ),
++          ),
++        ),
++      ),
++    ),
++  );
++  // An empty streaming reply has a progress indicator, so do not settle it.
++  await tester.pump();
++}
++
++String _text(WidgetTester tester) => [
++  for (final widget in tester.widgetList<RichText>(find.byType(RichText)))
++    widget.text.toPlainText(),
++  for (final widget in tester.widgetList<Text>(find.byType(Text)))
++    widget.data ?? '',
++  for (final widget in tester.widgetList<SelectableText>(
++    find.byType(SelectableText),
++  ))
++    widget.data ?? widget.textSpan?.toPlainText() ?? '',
++].join('\n');
++
++const _example =
++    r'The value of $\tan 90^\circ$ (or $\pi/2$ radians) is '
++    r'undefined. As the angle approaches $90^\circ$, the cosine approaches zero.';
++
++const _mixed = r'''
++## Mathematics / গণিত
++
++The value of $\tan 90^\circ$ is **undefined**.
++
++বাংলা: $\pi/2$ রেডিয়ান।
++
++\[
++\frac{\sin\theta}{\cos\theta}
++\]
++
++- A square root: $\sqrt{x^2+y^2}$
++- A power: $e^{i\pi}+1=0$
++
++> Keep formulas readable offline.
++
++| Symbol | Meaning |
++| --- | --- |
++| $\pi$ | Pi |
++| $\theta$ | Angle |
++
++```python
++print("math: $x^2$")
++```
++''';
++
++void main() {
++  group('math delimiter parsing', () {
++    test('supports all four delimiter forms', () {
++      final math = _elements(_parse(r'$x$ and \(y\), $$z$$ and \[w\].'))
++          .where((e) => e.tag == 'math-inline');
++      expect(math.map((e) => e.textContent), ['x', 'y', 'z', 'w']);
++    });
++
++    test('preserves code, currency and escaped dollar symbols', () {
++      final nodes = _parse(r'`$x$` and `$\tan 90^\circ$`, $10 and $20, \$5.');
++      expect(_elements(nodes).where((e) => e.tag.startsWith('math-')), isEmpty);
++      expect(nodes.map((e) => e.textContent).join(), contains(r'$10 and $20'));
++      final fenced = _parse(
++        '```tex\n'
++        r'$$\frac{1}{2}$$'
++        '\n```',
++      );
++      expect(
++        _elements(fenced).where((e) => e.tag.startsWith('math-')),
++        isEmpty,
++      );
++    });
++
++    test('parses multiline matrices without treating rows as Markdown', () {
++      final nodes = _parse(r'''
++$$
++\begin{pmatrix}
++1 & 2 \\
++3 & 4
++\end{pmatrix}
++$$
++
++After the matrix.
++''');
++      final math = _elements(nodes).singleWhere((e) => e.tag == 'math-block');
++      expect(math.textContent, contains(r'\begin{pmatrix}'));
++      expect(math.attributes['source'], startsWith(r'$$'));
++      expect(nodes.last.textContent, 'After the matrix.');
++    });
++
++    test('keeps unfinished explicit delimiters and commands as source', () {
++      for (final source in [r'\(\frac{1}', r'\[\sqrt{x}', '\$\$\n\\frac{1}']) {
++        final nodes = _parse(source);
++        expect(nodes.map((n) => n.textContent).join(), source);
++        expect(
++          _elements(nodes).where((e) => e.tag.startsWith('math-')),
++          isEmpty,
++        );
++      }
++    });
++  });
++
++  testWidgets('renders the reported tangent answer as three equations', (
++    tester,
++  ) async {
++    await _pump(tester, _example);
++    expect(find.byType(Math), findsNWidgets(3));
++    expect(_text(tester), contains('undefined'));
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('renders matrices and aligned equations', (tester) async {
++    await _pump(tester, r'''
++$$\begin{pmatrix}1 & 2 \\ 3 & 4\end{pmatrix}$$
++
++\[
++\begin{aligned}x &= 1 \\ y &= 2\end{aligned}
++\]
++''');
++    expect(find.byType(Math), findsNWidgets(2));
++    for (final math in tester.widgetList<Math>(find.byType(Math))) {
++      expect(math.parseError, isNull);
++    }
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('streaming incomplete math becomes rendered when closed', (
++    tester,
++  ) async {
++    await _pump(tester, r'Answer: \(\frac{1}{2}', streaming: true);
++    expect(find.byType(Math), findsNothing);
++    expect(_text(tester), contains(r'\(\frac{1}{2}'));
++    await _pump(tester, r'Answer: \(\frac{1}{2}\)', streaming: true);
++    expect(find.byType(Math), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('malformed and oversized math stays visible without throwing', (
++    tester,
++  ) async {
++    await _pump(tester, r'Invalid: $\unsupportedcommand{x}$');
++    expect(_text(tester), contains(r'$\unsupportedcommand{x}$'));
++    await _pump(tester, '\$${'x' * 8193}\$');
++    expect(find.byType(Math), findsNothing);
++    expect(_text(tester), contains('x' * 8193));
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('copy reply keeps original TeX and excludes thinking', (
++    tester,
++  ) async {
++    final copied = <String>[];
++    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
++      SystemChannels.platform,
++      (call) async {
++        if (call.method == 'Clipboard.setData') {
++          copied.add((call.arguments as Map)['text'] as String);
++        }
++        return null;
++      },
++    );
++    await _pump(tester, '<think>private</think>$_example');
++    await tester.tap(find.byTooltip('Copy'));
++    await tester.pump();
++    expect(copied, [_example]);
++  });
++
++  testWidgets('wide equations, tables and code scroll at large text sizes', (
++    tester,
++  ) async {
++    tester.view
++      ..physicalSize = const Size(960, 2400)
++      ..devicePixelRatio = 3;
++    addTearDown(tester.view.reset);
++    await _pump(
++      tester,
++      r'Inline: $a_1+a_2+a_3+a_4+a_5+a_6+a_7+a_8+a_9+a_{10}=100$'
++      '\n\n'
++      r'$$a_1+a_2+a_3+a_4+a_5+a_6+a_7+a_8+a_9+a_{10}=100$$'
++      '\n\n'
++      '| Very long heading with several words | Another long heading |\n'
++      '| --- | --- |\n| First value | Second value |\n\n'
++      '```dart\nfinal veryLongName = "${'x' * 100}";\n```',
++      scale: 2,
++    );
++    final horizontal = tester
++        .widgetList<SingleChildScrollView>(find.byType(SingleChildScrollView))
++        .where((w) => w.scrollDirection == Axis.horizontal);
++    expect(horizontal.length, greaterThanOrEqualTo(4));
++    expect(tester.takeException(), isNull);
++  });
++
++  group('visual evidence', () {
++    for (final locale in const [Locale('en'), Locale('bn')]) {
++      for (final mode in const [ThemeMode.light, ThemeMode.dark]) {
++        testWidgets(
++          'math reply ${locale.languageCode} ${mode.name}',
++          tags: ['golden'],
++          (tester) async {
++            tester.view
++              ..physicalSize = const Size(1080, 2700)
++              ..devicePixelRatio = 3;
++            addTearDown(tester.view.reset);
++            await _pump(tester, _mixed, locale: locale, mode: mode);
++            await expectLater(
++              find.byType(Scaffold),
++              matchesGoldenFile(
++                '../../../goldens/goldens/'
++                'math_reply_${locale.languageCode}_${mode.name}.png',
++              ),
++            );
++          },
++        );
++      }
++    }
++  });
++}
+--- /dev/null
++++ b/test/features/model_manager/presentation/models_state_test.dart
+@@ -0,0 +1,87 @@
++import 'package:emberwit/core/catalog/model_catalog.dart';
++import 'package:emberwit/core/models/model_library.dart';
++import 'package:emberwit/core/recommendation/model_recommendation.dart';
++import 'package:emberwit/features/model_manager/presentation/models_controller.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++import '../../../fixtures/catalog_fixtures.dart';
++import '../../../fixtures/device_fixtures.dart';
++
++InstalledModel _installed(CatalogEntry entry) => InstalledModel(
++  id: entry.id,
++  displayName: entry.displayName,
++  fileName: '${entry.id}.gguf',
++  sizeBytes: entry.fileSizeBytes,
++  sha256: entry.sha256,
++  verification: ModelVerification.verified,
++  installedAt: DateTime.utc(2026),
++  catalogEntry: entry,
++);
++
++CatalogSnapshot _snapshot(List<CatalogEntry> entries) => CatalogSnapshot(
++  catalog: ModelCatalog(
++    schemaVersion: 1,
++    catalogVersion: 2,
++    generatedAt: DateTime.utc(2026),
++    models: entries,
++  ),
++  source: CatalogSource.cache,
++  loadedAt: DateTime.utc(2026),
++);
++
++void main() {
++  test(
++    'saved metadata survives registry JSON and removal from the catalog',
++    () {
++      final original = _installed(entry());
++      final restored = InstalledModel.fromJson(original.toJson());
++      final state = ModelsState(catalog: _snapshot([]), profile: profile());
++      expect(state.entryForInstalled(restored), original.catalogEntry);
++      expect(state.recommendationForInstalled(restored), isNotNull);
++    },
++  );
++
++  test('installed recommendations do not require download storage', () {
++    final model = _installed(entry(size: 100000000));
++    final state = ModelsState(profile: profile(freeStorageBytes: 0));
++    final recommendation = state.recommendationForInstalled(model)!;
++    expect(recommendation.label, RecommendationLabel.recommended);
++    expect(recommendation.reasons.whereType<NotEnoughStorage>(), isEmpty);
++  });
++
++  test('saved metadata wins over a different current catalog entry', () {
++    final model = _installed(entry());
++    final changed = entry().copyWith(
++      description: const {'en': 'New file, different information'},
++    );
++    final state = ModelsState(catalog: _snapshot([changed]));
++    expect(state.entryForInstalled(model), model.catalogEntry);
++  });
++
++  test('legacy verified records only match catalog metadata by hash', () {
++    final catalogEntry = entry();
++    final model = _installed(catalogEntry).copyWith(catalogEntry: null);
++    final state = ModelsState(catalog: _snapshot([catalogEntry]));
++    expect(state.entryForInstalled(model), catalogEntry);
++    expect(
++      state.entryForInstalled(model.copyWith(sha256: 'different')),
++      isNull,
++    );
++    expect(
++      state.entryForInstalled(
++        model.copyWith(verification: ModelVerification.unverified),
++      ),
++      isNull,
++    );
++  });
++
++  test('missing metadata and missing profiles have no fabricated speed', () {
++    final model = _installed(entry());
++    expect(const ModelsState().recommendationForInstalled(model), isNull);
++    expect(
++      ModelsState(profile: profile())
++          .recommendationForInstalled(model.copyWith(catalogEntry: null)),
++      isNull,
++    );
++  });
++}
+--- /dev/null
++++ b/assets/fonts/KaTeX-LICENSE.txt
+@@ -0,0 +1,23 @@
++KaTeX fonts
++
++The MIT License (MIT)
++
++Copyright (c) 2018 Khan Academy
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
