@@ -13,7 +13,7 @@ environment:
 # recorded in docs/DEPENDENCIES.md. Dependabot proposes upgrades.
 dependencies:
   background_downloader: 9.6.2
-  battery_plus: 7.1.1
+  battery_plus: 7.1.2
   crypto: 3.0.7
   cryptography: 2.9.0
   device_info_plus: 13.2.0
