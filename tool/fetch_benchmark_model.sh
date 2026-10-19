@@ -11,10 +11,12 @@ cd "$(dirname "$0")/.."
 url="https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/main/SmolLM2-135M-Instruct-Q4_0.gguf"
 sha="bcc3af2849ad6095af57e9b5cd43775256efdc66e306acb529172f92d0c04b03"
 out="assets/models/benchmark.gguf"
-if [ -f "$out" ] && echo "$sha  $out" | sha256sum -c --quiet 2>/dev/null; then
+# macOS has shasum, not sha256sum.
+check() { if command -v sha256sum >/dev/null; then echo "$sha  $1" | sha256sum -c --quiet; else echo "$sha  $1" | shasum -a 256 -c --quiet; fi; }
+if [ -f "$out" ] && check "$out" 2>/dev/null; then
   echo "$out already present"; exit 0
 fi
 curl -fsSL --retry 3 -o "$out.part" "$url"
-echo "$sha  $out.part" | sha256sum -c --quiet
+check "$out.part"
 mv "$out.part" "$out"
 echo "Downloaded $out"

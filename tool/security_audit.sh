@@ -43,7 +43,7 @@ for unexpected in READ_CONTACTS ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION \
 done
 pass "no sensitive permissions"
 
-unzip -q "$apk" -d "$work"
+python3 -m zipfile -e "$apk" "$work"  # no unzip on every CI image
 if grep -rlaE 'BEGIN (RSA |EC |OPENSSH |)PRIVATE KEY|storePassword|keyPassword' \
   "$work" >/dev/null; then
   fail "private key or signing secret inside the APK"
@@ -53,7 +53,7 @@ pass "no private keys or signing secrets"
 libapp="$(find "$work/lib" -name libapp.so | head -1)"
 [ -n "$libapp" ] || fail "libapp.so missing"
 for symbol in ChatRepositoryImpl ChatArchiveCodec RuntimeSupervisor; do
-  strings "$libapp" | grep -q "$symbol" && fail "Dart symbols not obfuscated ($symbol)"
+  grep -qa "$symbol" "$libapp" && fail "Dart symbols not obfuscated ($symbol)"
 done
 pass "Dart code obfuscated"
 
