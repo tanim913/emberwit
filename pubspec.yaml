@@ -41,7 +41,7 @@ dependencies:
   path_provider: 2.1.6
   riverpod_annotation: 4.0.7
   shared_preferences: 2.5.5
-  sqlite3: 3.6.0
+  sqlite3: 3.7.1
   url_launcher: 6.3.2
   uuid: 4.6.0
 dev_dependencies:
